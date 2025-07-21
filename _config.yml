@@ -1,0 +1,31 @@
+# GitHub Pages Configuration
+title: "Formulários Maçónicos Online - Federação Portuguesa"
+description: "Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «Le Droit Humain»"
+
+# Enable GitHub Pages
+plugins:
+  - jekyll-default-layout
+  - jekyll-optional-front-matter
+  - jekyll-readme-index
+  - jekyll-titles-from-headings
+  - jekyll-relative-links
+
+# Theme
+theme: minima
+
+# Include these files
+include:
+  - "*.html"
+  - "*.md"
+
+# Exclude these files
+exclude:
+  - README.md
+  - .github/
+
+# Markdown configuration
+markdown: kramdown
+highlighter: rouge
+
+# Encoding
+encoding: utf-8
