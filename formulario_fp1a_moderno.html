@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+a<!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
@@ -960,75 +960,212 @@
                 telefoneTrabalho: document.getElementById('telefoneTrabalho').value,
                 email: document.getElementById('email').value
             };
-            
-            // Criar conteúdo HTML para o Word
+
             let htmlContent = `
+                <!DOCTYPE html>
                 <html>
                 <head>
                     <meta charset="UTF-8">
+                    <title>Formulário FP 1A - Ordem Maçónica</title>
                     <style>
-                        body { font-family: 'Times New Roman', serif; margin: 40px; }
-                        .header { text-align: center; font-weight: bold; margin-bottom: 30px; }
-                        .section { margin-bottom: 25px; }
-                        .field { margin-bottom: 10px; }
-                        .label { font-weight: bold; }
-                        .underline { border-bottom: 1px solid black; display: inline-block; min-width: 200px; }
+                        body {
+                            font-family: Times, serif;
+                            font-size: 12pt;
+                            line-height: 1.3;
+                            max-width: 8.5in;
+                            margin: 0 auto;
+                            padding: 1in;
+                            background: white;
+                            color: black;
+                        }
+                        .logo-placeholder {
+                            position: absolute;
+                            top: 20pt;
+                            left: 20pt;
+                            width: 100pt;
+                            height: 80pt;
+                            border: 1pt dashed #666;
+                            text-align: center;
+                            font-size: 8pt;
+                            color: #666;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                        .header {
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 14pt;
+                            margin-bottom: 20pt;
+                            line-height: 1.2;
+                        }
+                        .title {
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 13pt;
+                            text-decoration: underline;
+                            margin: 25pt 0;
+                        }
+                        .form-row {
+                            margin-bottom: 12pt;
+                            line-height: 1.4;
+                        }
+                        .form-label {
+                            font-weight: bold;
+                        }
+                        .underline-field {
+                            border-bottom: 1pt solid black;
+                            display: inline-block;
+                            min-width: 200pt;
+                            height: 16pt;
+                            margin-left: 5pt;
+                            padding: 2pt;
+                        }
+                        .checkbox {
+                            display: inline-block;
+                            width: 12pt;
+                            height: 12pt;
+                            border: 1pt solid black;
+                            margin-right: 5pt;
+                            vertical-align: middle;
+                        }
+                        .signature-area {
+                            margin: 30pt 0;
+                            text-align: center;
+                        }
+                        .signature-box {
+                            border-bottom: 1pt solid black;
+                            width: 300pt;
+                            height: 60pt;
+                            margin: 0 auto;
+                            display: block;
+                        }
+                        .stamp-placeholder {
+                            position: absolute;
+                            bottom: 100pt;
+                            right: 50pt;
+                            width: 120pt;
+                            height: 80pt;
+                            border: 1pt dashed #666;
+                            text-align: center;
+                            font-size: 10pt;
+                            color: #666;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                        .page-break {
+                            page-break-before: always;
+                            margin-top: 50pt;
+                        }
+                        .approval-section {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-top: 40pt;
+                        }
+                        .approval-box {
+                            text-align: center;
+                            width: 150pt;
+                        }
+                        .approval-line {
+                            border-bottom: 1pt solid black;
+                            height: 40pt;
+                            margin-bottom: 5pt;
+                        }
+                        .footer-info {
+                            position: fixed;
+                            bottom: 30pt;
+                            right: 30pt;
+                            font-weight: bold;
+                            font-size: 10pt;
+                        }
+                        .dropdown-options {
+                            font-style: italic;
+                            color: #666;
+                            font-size: 10pt;
+                        }
+                        @page {
+                            size: A4;
+                            margin: 1in;
+                        }
+                        @media print {
+                            body {
+                                margin: 0;
+                                padding: 1in;
+                            }
+                        }
                     </style>
                 </head>
                 <body>
-                    <div class="header">
-                        <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
-                        <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
-                        <h3>FORMULÁRIO FP 1A - AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE</h3>
+                    <div class="logo-placeholder">
+                        LOGÓTIPO<br>DA LOJA
                     </div>
-                    
-                    <div class="section">
-                        <div class="field">
-                            <span class="label">Apelido(s): </span>
-                            <span class="underline">${formData.apelidos}</span>
+                    <div class="header">
+                        ORDEM MAÇÓNICA MISTA INTERNACIONAL «LE DROIT HUMAIN»<br>
+                        FEDERAÇÃO PORTUGUESA
+                    </div>
+                    <div class="title">
+                        AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Apelido(s):</span>
+                        <span class="underline-field">${formData.apelidos}</span>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Nome(s) próprio(s):</span>
+                        <span class="underline-field">${formData.nomes}</span>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Estado civil:</span>
+                        <span class="underline-field">${formData.estadoCivil}</span>
+                        <div class="dropdown-options">
+                            [Opções: Solteiro(a), Casado(a), Divorciado(a), Viúvo(a), União de facto]
                         </div>
-                        <div class="field">
-                            <span class="label">Nome(s) próprio(s): </span>
-                            <span class="underline">${formData.nomes}</span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Estado civil: </span>
-                            <span class="underline">${formData.estadoCivil}</span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Local e data de nascimento: </span>
-                            <span class="underline">${formData.nascimento}</span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Nacionalidade: </span>
-                            <span class="underline">${formData.nacionalidade}</span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Morada: </span>
-                            <span class="underline">${formData.morada}</span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Localidade: </span>
-                            <span class="underline">${formData.localidade}</span>
-                            <span class="label"> Código postal: </span>
-                            <span class="underline">${formData.codigoPostal}</span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Telemóvel: </span>
-                            <span class="underline">${formData.telemovel}</span>
-                            <span class="label"> Email: </span>
-                            <span class="underline">${formData.email}</span>
-                        </div>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Local e data de nascimento:</span>
+                        <span class="underline-field">${formData.nascimento}</span>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Nacionalidade:</span>
+                        <span class="underline-field">${formData.nacionalidade}</span>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Morada:</span>
+                        <span class="underline-field">${formData.morada}</span>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Localidade:</span>
+                        <span class="underline-field" style="width: 200pt;">${formData.localidade}</span>
+                        <span class="form-label" style="margin-left: 20pt;">Código postal:</span>
+                        <span class="underline-field" style="width: 120pt;">${formData.codigoPostal}</span>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Telemóvel:</span>
+                        <span class="underline-field" style="width: 120pt;">${formData.telemovel}</span>
+                        <span class="form-label" style="margin-left: 20pt;">Email:</span>
+                        <span class="underline-field" style="width: 250pt;">${formData.email}</span>
+                    </div>
+                    <div class="form-row">
+                        <span class="form-label">Telefone casa:</span>
+                        <span class="underline-field" style="width: 120pt;">${formData.telefone}</span>
+                        <span class="form-label" style="margin-left: 20pt;">Telefone do trabalho:</span>
+                        <span class="underline-field" style="width: 120pt;">${formData.telefoneTrabalho}</span>
+                    </div>
+                    <div class="stamp-placeholder">
+                        Carimbo<br>da Loja
+                    </div>
+                    <div class="footer-info">
+                        Formulário Nº 1A da FP
                     </div>
                 </body>
                 </html>
             `;
-            
+
             // Criar e baixar o arquivo
             const blob = new Blob([htmlContent], {
                 type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             });
-            
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.style.display = 'none';
