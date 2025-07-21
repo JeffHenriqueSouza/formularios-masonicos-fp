@@ -945,232 +945,686 @@
 
         // Função para exportar para Word
         function exportToWord() {
-            // Coletar dados do formulário
+            // Coletar TODOS os dados do formulário
             const formData = {
-                apelidos: document.getElementById('apelidos').value,
-                nomes: document.getElementById('nomes').value,
-                estadoCivil: document.getElementById('estadoCivil').value,
-                nacionalidade: document.getElementById('nacionalidade').value,
-                nascimento: document.getElementById('nascimento').value,
-                morada: document.getElementById('morada').value,
-                localidade: document.getElementById('localidade').value,
-                codigoPostal: document.getElementById('codigoPostal').value,
-                telemovel: document.getElementById('telemovel').value,
-                telefone: document.getElementById('telefone').value,
-                telefoneTrabalho: document.getElementById('telefoneTrabalho').value,
-                email: document.getElementById('email').value
+                apelidos: document.getElementById('apelidos').value || '',
+                nomes: document.getElementById('nomes').value || '',
+                estadoCivil: document.getElementById('estadoCivil').options[document.getElementById('estadoCivil').selectedIndex]?.text || '',
+                nacionalidade: document.getElementById('nacionalidade').value || '',
+                nascimento: document.getElementById('nascimento').value || '',
+                morada: document.getElementById('morada').value || '',
+                localidade: document.getElementById('localidade').value || '',
+                codigoPostal: document.getElementById('codigoPostal').value || '',
+                telemovel: document.getElementById('telemovel').value || '',
+                telefone: document.getElementById('telefone').value || '',
+                telefoneTrabalho: document.getElementById('telefoneTrabalho').value || '',
+                email: document.getElementById('email').value || '',
+                // Situação Maçónica
+                situacao1: document.getElementById('situacao1').checked ? '✓' : '☐',
+                situacao2: document.getElementById('situacao2').checked ? '✓' : '☐',
+                situacao3: document.getElementById('situacao3').checked ? '✓' : '☐',
+                situacao4: document.getElementById('situacao4').checked ? '✓' : '☐',
+                // Documentação
+                atestadoQuite: getRadioValue('atestadoQuite'),
+                passaporteDH: getRadioValue('passaporteDH'),
+                justificacao: document.getElementById('justificacao').value || '',
+                // Habilitações
+                ensinoBasico: document.getElementById('ensino_basico').checked ? '✓' : '☐',
+                ensinoSecundario: document.getElementById('ensino_secundario').checked ? '✓' : '☐',
+                ensinoTecnico: document.getElementById('ensino_tecnico').checked ? '✓' : '☐',
+                ensinoSuperior: document.getElementById('ensino_superior').checked ? '✓' : '☐',
+                cursoSuperior: document.getElementById('cursoSuperior').value || '',
+                // Informações profissionais e familiares
+                profissaoAtual: document.getElementById('profissaoAtual').value || '',
+                profissaoAnterior: document.getElementById('profissaoAnterior').value || '',
+                conjuge: document.getElementById('conjuge').value || '',
+                conjugeMaconico: getRadioValue('conjugeMaconico'),
+                ordemConjuge: document.getElementById('ordemConjuge').value || '',
+                conjugeCiente: getRadioValue('conjugeCiente'),
+                temFilhos: getRadioValue('temFilhos'),
+                idadesFilhos: document.getElementById('idadesFilhos').value || '',
+                filantropia: document.getElementById('filantropia').value || '',
+                data: document.getElementById('data').value || '',
+                loja: document.getElementById('loja').options[document.getElementById('loja').selectedIndex]?.text || ''
             };
 
+            function getRadioValue(name) {
+                const radios = document.querySelectorAll(`input[name="${name}"]`);
+                for (let radio of radios) {
+                    if (radio.checked) return radio.value === 'sim' ? 'Sim' : 'Não';
+                }
+                return '';
+            }
+
             let htmlContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Formulário FP 1A - Ordem Maçónica</title>
-                    <style>
-                        body {
-                            font-family: Times, serif;
-                            font-size: 12pt;
-                            line-height: 1.3;
-                            max-width: 8.5in;
-                            margin: 0 auto;
-                            padding: 1in;
-                            background: white;
-                            color: black;
-                        }
-                        .logo-placeholder {
-                            position: absolute;
-                            top: 20pt;
-                            left: 20pt;
-                            width: 100pt;
-                            height: 80pt;
-                            border: 1pt dashed #666;
-                            text-align: center;
-                            font-size: 8pt;
-                            color: #666;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-                        .header {
-                            text-align: center;
-                            font-weight: bold;
-                            font-size: 14pt;
-                            margin-bottom: 20pt;
-                            line-height: 1.2;
-                        }
-                        .title {
-                            text-align: center;
-                            font-weight: bold;
-                            font-size: 13pt;
-                            text-decoration: underline;
-                            margin: 25pt 0;
-                        }
-                        .form-row {
-                            margin-bottom: 12pt;
-                            line-height: 1.4;
-                        }
-                        .form-label {
-                            font-weight: bold;
-                        }
-                        .underline-field {
-                            border-bottom: 1pt solid black;
-                            display: inline-block;
-                            min-width: 200pt;
-                            height: 16pt;
-                            margin-left: 5pt;
-                            padding: 2pt;
-                        }
-                        .checkbox {
-                            display: inline-block;
-                            width: 12pt;
-                            height: 12pt;
-                            border: 1pt solid black;
-                            margin-right: 5pt;
-                            vertical-align: middle;
-                        }
-                        .signature-area {
-                            margin: 30pt 0;
-                            text-align: center;
-                        }
-                        .signature-box {
-                            border-bottom: 1pt solid black;
-                            width: 300pt;
-                            height: 60pt;
-                            margin: 0 auto;
-                            display: block;
-                        }
-                        .stamp-placeholder {
-                            position: absolute;
-                            bottom: 100pt;
-                            right: 50pt;
-                            width: 120pt;
-                            height: 80pt;
-                            border: 1pt dashed #666;
-                            text-align: center;
-                            font-size: 10pt;
-                            color: #666;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-                        .page-break {
-                            page-break-before: always;
-                            margin-top: 50pt;
-                        }
-                        .approval-section {
-                            display: flex;
-                            justify-content: space-between;
-                            margin-top: 40pt;
-                        }
-                        .approval-box {
-                            text-align: center;
-                            width: 150pt;
-                        }
-                        .approval-line {
-                            border-bottom: 1pt solid black;
-                            height: 40pt;
-                            margin-bottom: 5pt;
-                        }
-                        .footer-info {
-                            position: fixed;
-                            bottom: 30pt;
-                            right: 30pt;
-                            font-weight: bold;
-                            font-size: 10pt;
-                        }
-                        .dropdown-options {
-                            font-style: italic;
-                            color: #666;
-                            font-size: 10pt;
-                        }
-                        @page {
-                            size: A4;
-                            margin: 1in;
-                        }
-                        @media print {
-                            body {
-                                margin: 0;
-                                padding: 1in;
-                            }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="logo-placeholder">
-                        LOGÓTIPO<br>DA LOJA
-                    </div>
-                    <div class="header">
-                        ORDEM MAÇÓNICA MISTA INTERNACIONAL «LE DROIT HUMAIN»<br>
-                        FEDERAÇÃO PORTUGUESA
-                    </div>
-                    <div class="title">
-                        AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Apelido(s):</span>
-                        <span class="underline-field">${formData.apelidos}</span>
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Nome(s) próprio(s):</span>
-                        <span class="underline-field">${formData.nomes}</span>
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Estado civil:</span>
-                        <span class="underline-field">${formData.estadoCivil}</span>
-                        <div class="dropdown-options">
-                            [Opções: Solteiro(a), Casado(a), Divorciado(a), Viúvo(a), União de facto]
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Local e data de nascimento:</span>
-                        <span class="underline-field">${formData.nascimento}</span>
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Nacionalidade:</span>
-                        <span class="underline-field">${formData.nacionalidade}</span>
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Morada:</span>
-                        <span class="underline-field">${formData.morada}</span>
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Localidade:</span>
-                        <span class="underline-field" style="width: 200pt;">${formData.localidade}</span>
-                        <span class="form-label" style="margin-left: 20pt;">Código postal:</span>
-                        <span class="underline-field" style="width: 120pt;">${formData.codigoPostal}</span>
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Telemóvel:</span>
-                        <span class="underline-field" style="width: 120pt;">${formData.telemovel}</span>
-                        <span class="form-label" style="margin-left: 20pt;">Email:</span>
-                        <span class="underline-field" style="width: 250pt;">${formData.email}</span>
-                    </div>
-                    <div class="form-row">
-                        <span class="form-label">Telefone casa:</span>
-                        <span class="underline-field" style="width: 120pt;">${formData.telefone}</span>
-                        <span class="form-label" style="margin-left: 20pt;">Telefone do trabalho:</span>
-                        <span class="underline-field" style="width: 120pt;">${formData.telefoneTrabalho}</span>
-                    </div>
-                    <div class="stamp-placeholder">
-                        Carimbo<br>da Loja
-                    </div>
-                    <div class="footer-info">
-                        Formulário Nº 1A da FP
-                    </div>
-                </body>
-                </html>
-            `;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Formulário FP 1A - Ordem Maçónica</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm 2cm 2cm 2cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #2c3e50;
+            background: white;
+            position: relative;
+        }
+        
+        /* Header com gradiente sutil */
+        .document-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .logo-space {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 80px;
+            height: 60px;
+            border: 2px dashed #3498db;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8pt;
+            color: #3498db;
+            font-weight: bold;
+            background: rgba(52, 152, 219, 0.05);
+        }
+        
+        .stamp-space {
+            position: absolute;
+            bottom: 80px;
+            right: 40px;
+            width: 100px;
+            height: 70px;
+            border: 2px dashed #e74c3c;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9pt;
+            color: #e74c3c;
+            font-weight: bold;
+            background: rgba(231, 76, 60, 0.05);
+        }
+        
+        .organization-name {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .federation-name {
+            font-size: 12pt;
+            color: #34495e;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .form-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #e74c3c;
+            text-decoration: underline;
+            margin-top: 10px;
+        }
+        
+        /* Seções do formulário */
+        .form-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            background: #fdfdfd;
+        }
+        
+        .section-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #2c3e50;
+            background: #3498db;
+            color: white;
+            padding: 8px 15px;
+            margin: -15px -15px 15px -15px;
+            border-radius: 6px 6px 0 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-row {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: baseline;
+        }
+        
+        .form-label {
+            font-weight: bold;
+            color: #34495e;
+            min-width: 140px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .form-value {
+            flex: 1;
+            border-bottom: 1px solid #2c3e50;
+            min-height: 18px;
+            padding: 2px 5px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-value.empty {
+            border-bottom: 1px solid #bdc3c7;
+            color: #95a5a6;
+        }
+        
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .checkbox {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #2c3e50;
+            margin-right: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10pt;
+            background: white;
+        }
+        
+        .checkbox.checked {
+            background: #3498db;
+            color: white;
+        }
+        
+        .textarea-value {
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+            min-height: 60px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            width: 100%;
+        }
+        
+        .two-column {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .column {
+            flex: 1;
+        }
+        
+        .signature-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+        }
+        
+        .signature-title {
+            font-weight: bold;
+            font-size: 12pt;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .signature-line {
+            border-bottom: 2px solid #2c3e50;
+            width: 300px;
+            height: 50px;
+            margin: 0 auto;
+            background: white;
+        }
+        
+        .approval-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        
+        .approval-box {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+        
+        .approval-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 10pt;
+        }
+        
+        .approval-line {
+            border-bottom: 1px solid #2c3e50;
+            height: 40px;
+            margin: 10px 0;
+            background: white;
+        }
+        
+        .documents-section {
+            margin-top: 25px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+        }
+        
+        .documents-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 11pt;
+        }
+        
+        .documents-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .documents-list li {
+            margin-bottom: 5px;
+            padding-left: 20px;
+            position: relative;
+            color: #856404;
+        }
+        
+        .documents-list li:before {
+            content: "•";
+            color: #856404;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 9pt;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8pt;
+            color: #bdc3c7;
+            text-align: center;
+        }
+        
+        @media print {
+            .form-section {
+                break-inside: avoid;
+            }
+            
+            .signature-section {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-space">
+        LOGÓTIPO<br>DA LOJA
+    </div>
+    
+    <div class="stamp-space">
+        CARIMBO<br>DA LOJA
+    </div>
+    
+    <div class="document-header">
+        <div class="organization-name">Ordem Maçónica Mista Internacional</div>
+        <div class="federation-name">«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</div>
+        <div class="form-title">FORMULÁRIO FP 1A</div>
+        <div style="font-size: 11pt; margin-top: 5px; color: #7f8c8d;">AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE</div>
+    </div>
+    
+    <!-- DADOS PESSOAIS -->
+    <div class="form-section">
+        <div class="section-title">📋 Dados Pessoais</div>
+        
+        <div class="form-row">
+            <span class="form-label">Apelido(s):</span>
+            <span class="form-value ${formData.apelidos ? '' : 'empty'}">${formData.apelidos || '_'.repeat(50)}</span>
+        </div>
+        
+        <div class="form-row">
+            <span class="form-label">Nome(s) próprio(s):</span>
+            <span class="form-value ${formData.nomes ? '' : 'empty'}">${formData.nomes || '_'.repeat(50)}</span>
+        </div>
+        
+        <div class="two-column">
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Estado civil:</span>
+                    <span class="form-value ${formData.estadoCivil ? '' : 'empty'}">${formData.estadoCivil || '_'.repeat(20)}</span>
+                </div>
+                
+                <div class="form-row">
+                    <span class="form-label">Nacionalidade:</span>
+                    <span class="form-value ${formData.nacionalidade ? '' : 'empty'}">${formData.nacionalidade || '_'.repeat(20)}</span>
+                </div>
+            </div>
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Data nascimento:</span>
+                    <span class="form-value ${formData.nascimento ? '' : 'empty'}">${formData.nascimento || '_'.repeat(20)}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <span class="form-label">Morada completa:</span>
+            <span class="form-value ${formData.morada ? '' : 'empty'}">${formData.morada || '_'.repeat(60)}</span>
+        </div>
+        
+        <div class="two-column">
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Localidade:</span>
+                    <span class="form-value ${formData.localidade ? '' : 'empty'}">${formData.localidade || '_'.repeat(25)}</span>
+                </div>
+            </div>
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Código postal:</span>
+                    <span class="form-value ${formData.codigoPostal ? '' : 'empty'}">${formData.codigoPostal || '____-___'}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="two-column">
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Telemóvel:</span>
+                    <span class="form-value ${formData.telemovel ? '' : 'empty'}">${formData.telemovel || '_'.repeat(15)}</span>
+                </div>
+                
+                <div class="form-row">
+                    <span class="form-label">Telefone casa:</span>
+                    <span class="form-value ${formData.telefone ? '' : 'empty'}">${formData.telefone || '_'.repeat(15)}</span>
+                </div>
+            </div>
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Email:</span>
+                    <span class="form-value ${formData.email ? '' : 'empty'}">${formData.email || '_'.repeat(30)}</span>
+                </div>
+                
+                <div class="form-row">
+                    <span class="form-label">Tel. trabalho:</span>
+                    <span class="form-value ${formData.telefoneTrabalho ? '' : 'empty'}">${formData.telefoneTrabalho || '_'.repeat(15)}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SITUAÇÃO MAÇÓNICA -->
+    <div class="form-section">
+        <div class="section-title">🏛️ Situação Maçónica</div>
+        
+        <div class="checkbox-row">
+            <span class="checkbox ${formData.situacao1 === '✓' ? 'checked' : ''}">${formData.situacao1}</span>
+            <span>Sou membro de outra Federação do "Le Droit Humain" e desejo afiliar-me à Federação Portuguesa</span>
+        </div>
+        
+        <div class="checkbox-row">
+            <span class="checkbox ${formData.situacao2 === '✓' ? 'checked' : ''}">${formData.situacao2}</span>
+            <span>Sou membro de outra Obediência e desejo ser integrado no "Le Droit Humain"</span>
+        </div>
+        
+        <div class="checkbox-row">
+            <span class="checkbox ${formData.situacao3 === '✓' ? 'checked' : ''}">${formData.situacao3}</span>
+            <span>Sou demissionário/irradiado do "Le Droit Humain" e desejo ser reintegrado na Federação Portuguesa</span>
+        </div>
+        
+        <div class="checkbox-row">
+            <span class="checkbox ${formData.situacao4 === '✓' ? 'checked' : ''}">${formData.situacao4}</span>
+            <span>Sou demissionário/irradiado de outra Obediência e desejo retomar a minha actividade maçónica</span>
+        </div>
+    </div>
+    
+    <!-- DOCUMENTAÇÃO -->
+    <div class="form-section">
+        <div class="section-title">📄 Documentação</div>
+        
+        <div class="two-column">
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Atestado de quite:</span>
+                    <span class="form-value">${formData.atestadoQuite || 'Não especificado'}</span>
+                </div>
+            </div>
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Passaporte do DH:</span>
+                    <span class="form-value">${formData.passaporteDH || 'Não especificado'}</span>
+                </div>
+            </div>
+        </div>
+        
+        ${formData.justificacao ? `
+        <div style="margin-top: 15px;">
+            <div class="form-label" style="margin-bottom: 8px;">Justificação (se não apresentar documentos):</div>
+            <div class="textarea-value">${formData.justificacao}</div>
+        </div>
+        ` : ''}
+    </div>
+    
+    <!-- HABILITAÇÕES -->
+    <div class="form-section">
+        <div class="section-title">🎓 Habilitações Académicas</div>
+        
+        <div class="two-column">
+            <div class="column">
+                <div class="checkbox-row">
+                    <span class="checkbox ${formData.ensinoBasico === '✓' ? 'checked' : ''}">${formData.ensinoBasico}</span>
+                    <span>Ensino Básico</span>
+                </div>
+                
+                <div class="checkbox-row">
+                    <span class="checkbox ${formData.ensinoSecundario === '✓' ? 'checked' : ''}">${formData.ensinoSecundario}</span>
+                    <span>Ensino Secundário</span>
+                </div>
+            </div>
+            <div class="column">
+                <div class="checkbox-row">
+                    <span class="checkbox ${formData.ensinoTecnico === '✓' ? 'checked' : ''}">${formData.ensinoTecnico}</span>
+                    <span>Ensino Técnico</span>
+                </div>
+                
+                <div class="checkbox-row">
+                    <span class="checkbox ${formData.ensinoSuperior === '✓' ? 'checked' : ''}">${formData.ensinoSuperior}</span>
+                    <span>Ensino Superior</span>
+                </div>
+            </div>
+        </div>
+        
+        ${formData.cursoSuperior ? `
+        <div class="form-row">
+            <span class="form-label">Curso Superior:</span>
+            <span class="form-value">${formData.cursoSuperior}</span>
+        </div>
+        ` : ''}
+    </div>
+    
+    <!-- INFORMAÇÕES PROFISSIONAIS -->
+    <div class="form-section">
+        <div class="section-title">💼 Informações Profissionais e Familiares</div>
+        
+        ${formData.profissaoAtual ? `
+        <div style="margin-bottom: 15px;">
+            <div class="form-label" style="margin-bottom: 8px;">Profissão(ões) que exerce atualmente:</div>
+            <div class="textarea-value">${formData.profissaoAtual}</div>
+        </div>
+        ` : ''}
+        
+        ${formData.profissaoAnterior ? `
+        <div style="margin-bottom: 15px;">
+            <div class="form-label" style="margin-bottom: 8px;">Profissão(ões) que já exerceu:</div>
+            <div class="textarea-value">${formData.profissaoAnterior}</div>
+        </div>
+        ` : ''}
+        
+        <div class="form-row">
+            <span class="form-label">Nome do cônjuge:</span>
+            <span class="form-value ${formData.conjuge ? '' : 'empty'}">${formData.conjuge || '_'.repeat(40)}</span>
+        </div>
+        
+        <div class="two-column">
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Cônjuge maçom:</span>
+                    <span class="form-value">${formData.conjugeMaconico || 'Não especificado'}</span>
+                </div>
+                
+                <div class="form-row">
+                    <span class="form-label">Tem filhos:</span>
+                    <span class="form-value">${formData.temFilhos || 'Não especificado'}</span>
+                </div>
+            </div>
+            <div class="column">
+                <div class="form-row">
+                    <span class="form-label">Ordem do cônjuge:</span>
+                    <span class="form-value ${formData.ordemConjuge ? '' : 'empty'}">${formData.ordemConjuge || '_'.repeat(20)}</span>
+                </div>
+                
+                <div class="form-row">
+                    <span class="form-label">Idades dos filhos:</span>
+                    <span class="form-value ${formData.idadesFilhos ? '' : 'empty'}">${formData.idadesFilhos || '_'.repeat(15)}</span>
+                </div>
+            </div>
+        </div>
+        
+        ${formData.filantropia ? `
+        <div style="margin-top: 15px;">
+            <div class="form-label" style="margin-bottom: 8px;">Obras filantrópicas:</div>
+            <div class="textarea-value">${formData.filantropia}</div>
+        </div>
+        ` : ''}
+    </div>
+    
+    <!-- DECLARAÇÃO -->
+    <div class="form-section">
+        <div class="section-title">📝 Declaração</div>
+        <p style="text-align: justify; line-height: 1.6; margin-bottom: 20px; font-style: italic;">
+            Declaro ter tomado conhecimento da Declaração de Princípios da Ordem Maçónica Mista Internacional 
+            <strong>"LE DROIT HUMAIN"</strong>, <strong>"O DIREITO HUMANO"</strong>, comprometendo-me a cumprir os deveres morais 
+            e a suportar os encargos materiais resultantes da minha entrada.
+        </p>
+        
+        <div class="form-row">
+            <span class="form-label">Data:</span>
+            <span class="form-value ${formData.data ? '' : 'empty'}">${formData.data || '_'.repeat(20)}</span>
+        </div>
+    </div>
+    
+    <!-- ASSINATURA -->
+    <div class="signature-section">
+        <div class="signature-title">Assinatura do Irmão/Irmã</div>
+        <div class="signature-line"></div>
+    </div>
+    
+    <!-- APROVAÇÃO -->
+    <div class="form-section">
+        <div class="section-title">✅ Para Uso da Loja</div>
+        
+        <div class="form-row">
+            <span class="form-label">Loja:</span>
+            <span class="form-value ${formData.loja ? '' : 'empty'}">${formData.loja || '_'.repeat(30)}</span>
+        </div>
+        
+        <div class="approval-section">
+            <div class="approval-box">
+                <div class="approval-title">Aprovado em</div>
+                <div class="approval-line"></div>
+                <div style="font-size: 9pt; color: #7f8c8d;">____/____/________</div>
+            </div>
+            
+            <div class="approval-box">
+                <div class="approval-title">Venerável Mestre</div>
+                <div class="approval-line"></div>
+                <div style="font-size: 9pt; color: #7f8c8d;">Assinatura</div>
+            </div>
+            
+            <div class="approval-box">
+                <div class="approval-title">Secretário Orador</div>
+                <div class="approval-line"></div>
+                <div style="font-size: 9pt; color: #7f8c8d;">Assinatura</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DOCUMENTOS -->
+    <div class="documents-section">
+        <div class="documents-title">📎 DOCUMENTOS A ENTREGAR EM ANEXO:</div>
+        <ul class="documents-list">
+            <li>Três fotografias tipo passe</li>
+            <li>Uma certidão de registo criminal</li>
+            <li>Uma certidão de nascimento narrativa completa</li>
+        </ul>
+    </div>
+    
+    <div class="footer">
+        Formulário Nº 1A da FP
+    </div>
+    
+    <div class="watermark">
+        Gerado online em ${new Date().toLocaleDateString('pt-PT')} - Sistema Maçónico Digital FP
+    </div>
+</body>
+</html>`;
 
             // Criar e baixar o arquivo
             const blob = new Blob([htmlContent], {
                 type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             });
+            
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = 'Formulario_FP1A.doc';
+            a.download = `Formulario_FP1A_${formData.apelidos || 'Profissional'}_${new Date().toISOString().split('T')[0]}.doc`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
