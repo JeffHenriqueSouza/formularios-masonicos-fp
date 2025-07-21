@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário FP 05 - Notificação ao Colégio de Oficiais</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-upload {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 100px;
+            height: 80px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo-upload:hover {
+            border-color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .logo-upload input {
+            display: none;
+        }
+
+        .logo-upload img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 5px;
+        }
+
+        .logo-placeholder {
+            font-size: 10px;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header h2 {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .form-title {
+            background: #e74c3c;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group.half {
+            flex: 0 0 calc(50% - 10px);
+        }
+
+        .form-group.third {
+            flex: 0 0 calc(33.333% - 14px);
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .officer-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .officer-card:hover {
+            border-color: #e74c3c;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.1);
+        }
+
+        .officer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #fdf2f2;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .notification-info {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .notification-info h4 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .notification-info p {
+            color: #155724;
+            margin-bottom: 8px;
+        }
+
+        .date-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .date-section h4 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+            
+            .form-content {
+                padding: 20px;
+            }
+            
+            .form-group.half,
+            .form-group.third {
+                flex: 1;
+                min-width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .action-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-upload" onclick="document.getElementById('logoUploadFP05').click()">
+                <input type="file" id="logoUploadFP05" accept="image/*">
+                <div class="logo-placeholder" id="logoPlaceholderFP05">
+                    <div>CLIQUE PARA</div>
+                    <div>ADICIONAR</div>
+                    <div>LOGÓTIPO</div>
+                </div>
+            </div>
+            
+            <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
+            <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
+        </div>
+
+        <div class="form-title">
+            FORMULÁRIO FP 05 - NOTIFICAÇÃO AO COLÉGIO DE OFICIAIS
+        </div>
+
+        <div class="form-content">
+            <!-- INFORMAÇÕES DA LOJA -->
+            <div class="form-section">
+                <h3 class="section-title">INFORMAÇÕES DA LOJA</h3>
+                
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label class="form-label">Nome da Loja:</label>
+                        <select class="form-input" id="nomeLoja" name="nomeLoja" onchange="updateLojaInfo()">
+                            <option value="">Selecione a Loja...</option>
+                            <option value="acacia1">Loja Acácia Nº 1</option>
+                            <option value="liberdade2">Loja Liberdade Nº 2</option>
+                            <option value="fraternidade3">Loja Fraternidade Nº 3</option>
+                            <option value="igualdade4">Loja Igualdade Nº 4</option>
+                            <option value="harmonia5">Loja Harmonia Nº 5</option>
+                            <option value="outra">Outra</option>
+                        </select>
+                    </div>
+                    <div class="form-group half">
+                        <label class="form-label">Número da Loja:</label>
+                        <input type="text" class="form-input" id="numeroLoja" name="numeroLoja" readonly>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Endereço da Loja:</label>
+                        <textarea class="form-input form-textarea" id="enderecoLoja" name="enderecoLoja" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFORMAÇÕES DO CANDIDATO -->
+            <div class="form-section">
+                <h3 class="section-title">INFORMAÇÕES DO CANDIDATO</h3>
+                
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label class="form-label">Nome completo:</label>
+                        <input type="text" class="form-input" id="nomeCandidato" name="nomeCandidato">
+                    </div>
+                    <div class="form-group half">
+                        <label class="form-label">Tipo de pedido:</label>
+                        <select class="form-input" id="tipoPedido" name="tipoPedido">
+                            <option value="">Selecione...</option>
+                            <option value="afiliacao">Afiliação</option>
+                            <option value="reintegracao">Reintegração</option>
+                            <option value="retoma">Retoma de Actividade</option>
+                            <option value="integracao">Integração de outra Obediência</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label class="form-label">Email do candidato:</label>
+                        <input type="email" class="form-input" id="emailCandidato" name="emailCandidato">
+                    </div>
+                    <div class="form-group half">
+                        <label class="form-label">Telefone do candidato:</label>
+                        <input type="tel" class="form-input" id="telefoneCandidato" name="telefoneCandidato">
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLÉGIO DE OFICIAIS -->
+            <div class="form-section">
+                <h3 class="section-title">CONTACTOS DO COLÉGIO DE OFICIAIS</h3>
+                
+                <!-- VENERÁVEL MESTRE -->
+                <div class="officer-card">
+                    <div class="officer-title">VENERÁVEL MESTRE</div>
+                    <div class="contact-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nome:</label>
+                            <input type="text" class="form-input" id="nomeVM" name="nomeVM">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email:</label>
+                            <input type="email" class="form-input" id="emailVM" name="emailVM">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone:</label>
+                            <input type="tel" class="form-input" id="telefoneVM" name="telefoneVM">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telemóvel:</label>
+                            <input type="tel" class="form-input" id="telemovelVM" name="telemovelVM">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRIMEIRO VIGILANTE -->
+                <div class="officer-card">
+                    <div class="officer-title">PRIMEIRO VIGILANTE</div>
+                    <div class="contact-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nome:</label>
+                            <input type="text" class="form-input" id="nome1V" name="nome1V">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email:</label>
+                            <input type="email" class="form-input" id="email1V" name="email1V">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone:</label>
+                            <input type="tel" class="form-input" id="telefone1V" name="telefone1V">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telemóvel:</label>
+                            <input type="tel" class="form-input" id="telemovel1V" name="telemovel1V">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEGUNDO VIGILANTE -->
+                <div class="officer-card">
+                    <div class="officer-title">SEGUNDO VIGILANTE</div>
+                    <div class="contact-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nome:</label>
+                            <input type="text" class="form-input" id="nome2V" name="nome2V">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email:</label>
+                            <input type="email" class="form-input" id="email2V" name="email2V">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone:</label>
+                            <input type="tel" class="form-input" id="telefone2V" name="telefone2V">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telemóvel:</label>
+                            <input type="tel" class="form-input" id="telemovel2V" name="telemovel2V">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECRETÁRIO ORADOR -->
+                <div class="officer-card">
+                    <div class="officer-title">SECRETÁRIO ORADOR</div>
+                    <div class="contact-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nome:</label>
+                            <input type="text" class="form-input" id="nomeSO" name="nomeSO">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email:</label>
+                            <input type="email" class="form-input" id="emailSO" name="emailSO">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone:</label>
+                            <input type="tel" class="form-input" id="telefoneSO" name="telefoneSO">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telemóvel:</label>
+                            <input type="tel" class="form-input" id="telemovelSO" name="telemovelSO">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OBSERVAÇÕES -->
+            <div class="form-section">
+                <h3 class="section-title">OBSERVAÇÕES</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Observações adicionais:</label>
+                        <textarea class="form-input form-textarea" id="observacoes" name="observacoes" rows="4" placeholder="Informações adicionais sobre o candidato ou processo..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFORMAÇÃO IMPORTANTE -->
+            <div class="notification-info">
+                <h4>INFORMAÇÃO IMPORTANTE</h4>
+                <p><strong>Finalidade:</strong> Esta notificação deve ser enviada ao colégio de oficiais da loja para informar sobre o pedido de afiliação/reintegração/retoma de actividade.</p>
+                <p><strong>Prazo:</strong> Deve ser enviada no prazo máximo de 15 dias após recepção do pedido.</p>
+                <p><strong>Contactos:</strong> Todos os oficiais listados serão contactados para análise do pedido.</p>
+            </div>
+
+            <!-- DATA E RESPONSÁVEL -->
+            <div class="date-section">
+                <h4>DATA E RESPONSÁVEL PELA NOTIFICAÇÃO</h4>
+                <div class="form-row" style="justify-content: center;">
+                    <div class="form-group" style="max-width: 200px;">
+                        <label class="form-label">Data:</label>
+                        <input type="date" class="form-input" id="dataNotificacao" name="dataNotificacao">
+                    </div>
+                    <div class="form-group" style="max-width: 300px;">
+                        <label class="form-label">Responsável:</label>
+                        <input type="text" class="form-input" id="responsavel" name="responsavel" placeholder="Nome do responsável">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÕES DE AÇÃO -->
+            <div class="action-buttons">
+                <button type="button" class="btn btn-primary" onclick="previewFormFP05()">Pré-visualizar</button>
+                <button type="button" class="btn btn-success" onclick="exportToWordFP05()">Exportar para Word</button>
+                <button type="button" class="btn btn-primary" onclick="generatePDFFP05()">Gerar PDF</button>
+                <button type="button" class="btn btn-secondary" onclick="clearFormFP05()">Limpar Formulário</button>
+                <button type="button" class="btn btn-success" onclick="sendNotification()">Enviar Notificação</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Upload do logótipo para FP05
+        document.getElementById('logoUploadFP05').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const logoContainer = document.querySelector('.logo-upload');
+                    logoContainer.innerHTML = `<img src="${e.target.result}" alt="Logótipo da Loja">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Atualizar informações da loja quando selecionada
+        function updateLojaInfo() {
+            const lojaSelect = document.getElementById('nomeLoja');
+            const numeroInput = document.getElementById('numeroLoja');
+            
+            const lojaInfo = {
+                'acacia1': { numero: '1', nome: 'Loja Acácia Nº 1' },
+                'liberdade2': { numero: '2', nome: 'Loja Liberdade Nº 2' },
+                'fraternidade3': { numero: '3', nome: 'Loja Fraternidade Nº 3' },
+                'igualdade4': { numero: '4', nome: 'Loja Igualdade Nº 4' },
+                'harmonia5': { numero: '5', nome: 'Loja Harmonia Nº 5' }
+            };
+
+            const selectedLoja = lojaSelect.value;
+            if (lojaInfo[selectedLoja]) {
+                numeroInput.value = lojaInfo[selectedLoja].numero;
+            } else {
+                numeroInput.value = '';
+            }
+        }
+
+        // Função para limpar formulário FP05
+        function clearFormFP05() {
+            if (confirm('Tem certeza que deseja limpar todo o formulário?')) {
+                document.querySelectorAll('#container input, #container select, #container textarea').forEach(field => {
+                    field.value = '';
+                });
+                
+                document.querySelector('.logo-upload').innerHTML = `
+                    <input type="file" id="logoUploadFP05" accept="image/*">
+                    <div class="logo-placeholder" id="logoPlaceholderFP05">
+                        <div>CLIQUE PARA</div>
+                        <div>ADICIONAR</div>
+                        <div>LOGÓTIPO</div>
+                    </div>
+                `;
+                
+                // Re-attach event listener
+                document.getElementById('logoUploadFP05').addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const logoContainer = document.querySelector('.logo-upload');
+                            logoContainer.innerHTML = `<img src="${e.target.result}" alt="Logótipo da Loja">`;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }
+
+        // Função para pré-visualização
+        function previewFormFP05() {
+            window.print();
+        }
+
+        // Função para gerar PDF
+        function generatePDFFP05() {
+            const element = document.querySelector('.container');
+            const buttons = document.querySelector('.action-buttons');
+            
+            buttons.style.display = 'none';
+            
+            html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgWidth = 210;
+                const pageHeight = 295;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                
+                let position = 0;
+                
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                pdf.save('Formulario_FP05_Notificacao.pdf');
+                buttons.style.display = 'flex';
+            });
+        }
+
+        // Função para exportar para Word
+        function exportToWordFP05() {
+            const formData = {
+                nomeLoja: document.getElementById('nomeLoja').options[document.getElementById('nomeLoja').selectedIndex].text,
+                numeroLoja: document.getElementById('numeroLoja').value,
+                enderecoLoja: document.getElementById('enderecoLoja').value,
+                nomeCandidato: document.getElementById('nomeCandidato').value,
+                tipoPedido: document.getElementById('tipoPedido').options[document.getElementById('tipoPedido').selectedIndex].text,
+                emailCandidato: document.getElementById('emailCandidato').value,
+                telefoneCandidato: document.getElementById('telefoneCandidato').value,
+                nomeVM: document.getElementById('nomeVM').value,
+                emailVM: document.getElementById('emailVM').value,
+                telefoneVM: document.getElementById('telefoneVM').value,
+                telemovelVM: document.getElementById('telemovelVM').value,
+                nome1V: document.getElementById('nome1V').value,
+                email1V: document.getElementById('email1V').value,
+                telefone1V: document.getElementById('telefone1V').value,
+                telemovel1V: document.getElementById('telemovel1V').value,
+                nome2V: document.getElementById('nome2V').value,
+                email2V: document.getElementById('email2V').value,
+                telefone2V: document.getElementById('telefone2V').value,
+                telemovel2V: document.getElementById('telemovel2V').value,
+                nomeSO: document.getElementById('nomeSO').value,
+                emailSO: document.getElementById('emailSO').value,
+                telefoneSO: document.getElementById('telefoneSO').value,
+                telemovelSO: document.getElementById('telemovelSO').value,
+                observacoes: document.getElementById('observacoes').value,
+                dataNotificacao: document.getElementById('dataNotificacao').value,
+                responsavel: document.getElementById('responsavel').value
+            };
+
+            let htmlContent = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: 'Times New Roman', serif; margin: 40px; line-height: 1.6; }
+                        .header { text-align: center; font-weight: bold; margin-bottom: 30px; }
+                        .section { margin-bottom: 25px; border: 1px solid #ddd; padding: 15px; }
+                        .section-title { font-weight: bold; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; }
+                        .field { margin-bottom: 10px; }
+                        .label { font-weight: bold; }
+                        .officer-section { background-color: #f9f9f9; padding: 15px; margin-bottom: 15px; }
+                        .officer-title { font-weight: bold; color: #e74c3c; margin-bottom: 10px; text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
+                        <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
+                        <h3>FORMULÁRIO FP 05 - NOTIFICAÇÃO AO COLÉGIO DE OFICIAIS</h3>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">INFORMAÇÕES DA LOJA</div>
+                        <div class="field"><span class="label">Nome da Loja: </span>${formData.nomeLoja}</div>
+                        <div class="field"><span class="label">Número da Loja: </span>${formData.numeroLoja}</div>
+                        <div class="field"><span class="label">Endereço: </span>${formData.enderecoLoja}</div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">INFORMAÇÕES DO CANDIDATO</div>
+                        <div class="field"><span class="label">Nome: </span>${formData.nomeCandidato}</div>
+                        <div class="field"><span class="label">Tipo de Pedido: </span>${formData.tipoPedido}</div>
+                        <div class="field"><span class="label">Email: </span>${formData.emailCandidato}</div>
+                        <div class="field"><span class="label">Telefone: </span>${formData.telefoneCandidato}</div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">COLÉGIO DE OFICIAIS</div>
+                        
+                        <div class="officer-section">
+                            <div class="officer-title">VENERÁVEL MESTRE</div>
+                            <div class="field"><span class="label">Nome: </span>${formData.nomeVM}</div>
+                            <div class="field"><span class="label">Email: </span>${formData.emailVM}</div>
+                            <div class="field"><span class="label">Telefone: </span>${formData.telefoneVM}</div>
+                            <div class="field"><span class="label">Telemóvel: </span>${formData.telemovelVM}</div>
+                        </div>
+                        
+                        <div class="officer-section">
+                            <div class="officer-title">PRIMEIRO VIGILANTE</div>
+                            <div class="field"><span class="label">Nome: </span>${formData.nome1V}</div>
+                            <div class="field"><span class="label">Email: </span>${formData.email1V}</div>
+                            <div class="field"><span class="label">Telefone: </span>${formData.telefone1V}</div>
+                            <div class="field"><span class="label">Telemóvel: </span>${formData.telemovel1V}</div>
+                        </div>
+                        
+                        <div class="officer-section">
+                            <div class="officer-title">SEGUNDO VIGILANTE</div>
+                            <div class="field"><span class="label">Nome: </span>${formData.nome2V}</div>
+                            <div class="field"><span class="label">Email: </span>${formData.email2V}</div>
+                            <div class="field"><span class="label">Telefone: </span>${formData.telefone2V}</div>
+                            <div class="field"><span class="label">Telemóvel: </span>${formData.telemovel2V}</div>
+                        </div>
+                        
+                        <div class="officer-section">
+                            <div class="officer-title">SECRETÁRIO ORADOR</div>
+                            <div class="field"><span class="label">Nome: </span>${formData.nomeSO}</div>
+                            <div class="field"><span class="label">Email: </span>${formData.emailSO}</div>
+                            <div class="field"><span class="label">Telefone: </span>${formData.telefoneSO}</div>
+                            <div class="field"><span class="label">Telemóvel: </span>${formData.telemovelSO}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">OBSERVAÇÕES</div>
+                        <div class="field">${formData.observacoes}</div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">DATA E RESPONSÁVEL</div>
+                        <div class="field"><span class="label">Data: </span>${formData.dataNotificacao}</div>
+                        <div class="field"><span class="label">Responsável: </span>${formData.responsavel}</div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([htmlContent], {
+                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'Formulario_FP05_Notificacao.doc';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Função para enviar notificação (simulada)
+        function sendNotification() {
+            // Verificar se os campos obrigatórios estão preenchidos
+            const nomeCandidato = document.getElementById('nomeCandidato').value;
+            const emailVM = document.getElementById('emailVM').value;
+            const email1V = document.getElementById('email1V').value;
+            const email2V = document.getElementById('email2V').value;
+            const emailSO = document.getElementById('emailSO').value;
+
+            if (!nomeCandidato) {
+                alert('Por favor, preencha o nome do candidato.');
+                return;
+            }
+
+            if (!emailVM || !email1V || !email2V || !emailSO) {
+                alert('Por favor, preencha todos os emails dos oficiais.');
+                return;
+            }
+
+            // Simular envio de email
+            const emails = [emailVM, email1V, email2V, emailSO].filter(email => email);
+            
+            if (confirm(`Deseja enviar a notificação para os seguintes emails?\n\n${emails.join('\n')}`)) {
+                // Aqui você integraria com um serviço de email real
+                alert('Notificação enviada com sucesso para todos os oficiais!\n\n' + 
+                      'Em uma implementação real, isto enviaria emails automáticos para:\n' +
+                      emails.join('\n'));
+            }
+        }
+
+        // Auto-fill data atual
+        document.getElementById('dataNotificacao').valueAsDate = new Date();
+    </script>
+</body>
+</html>
