@@ -921,283 +921,146 @@
             window.print();
         }
 
-        // Função para gerar PDF com dados do formulário
+        // Função para gerar PDF com captura de screenshot
         function generatePDF() {
-            // Coletar dados do formulário
-            const formData = {
-                tipoPedido: getTipoPedido(),
-                apelidos: document.getElementById('apelidos').value || '',
-                nomes: document.getElementById('nomes').value || '',
-                estadoCivil: document.getElementById('estadoCivil').options[document.getElementById('estadoCivil').selectedIndex]?.text || '',
-                nacionalidade: document.getElementById('nacionalidade').value || '',
-                nascimento: document.getElementById('nascimento').value || '',
-                morada: document.getElementById('morada').value || '',
-                localidade: document.getElementById('localidade').value || '',
-                codigoPostal: document.getElementById('codigoPostal').value || '',
-                telemovel: document.getElementById('telemovel').value || '',
-                telefone: document.getElementById('telefone').value || '',
-                telefoneTrabalho: document.getElementById('telefoneTrabalho').value || '',
-                email: document.getElementById('email').value || '',
-                situacao1: document.getElementById('situacao1').checked,
-                situacao2: document.getElementById('situacao2').checked,
-                situacao3: document.getElementById('situacao3').checked,
-                situacao4: document.getElementById('situacao4').checked,
-                atestadoQuite: getRadioValue('atestadoQuite'),
-                passaporteDH: getRadioValue('passaporteDH'),
-                justificacao: document.getElementById('justificacao').value || '',
-                ensinoBasico: document.getElementById('ensino_basico').checked,
-                ensinoSecundario: document.getElementById('ensino_secundario').checked,
-                ensinoTecnico: document.getElementById('ensino_tecnico').checked,
-                ensinoSuperior: document.getElementById('ensino_superior').checked,
-                cursoSuperior: document.getElementById('cursoSuperior').value || '',
-                profissaoAtual: document.getElementById('profissaoAtual').value || '',
-                profissaoAnterior: document.getElementById('profissaoAnterior').value || '',
-                conjuge: document.getElementById('conjuge').value || '',
-                conjugeMaconico: getRadioValue('conjugeMaconico'),
-                ordemConjuge: document.getElementById('ordemConjuge').value || '',
-                conjugeCiente: getRadioValue('conjugeCiente'),
-                temFilhos: getRadioValue('temFilhos'),
-                idadesFilhos: document.getElementById('idadesFilhos').value || '',
-                filantropia: document.getElementById('filantropia').value || '',
-                data: document.getElementById('data').value || '',
-                loja: document.getElementById('loja').options[document.getElementById('loja').selectedIndex]?.text || ''
-            };
-
-            function getRadioValue(name) {
-                const radios = document.querySelectorAll(`input[name="${name}"]`);
-                for (let radio of radios) {
-                    if (radio.checked) return radio.value === 'sim' ? 'Sim' : 'Não';
-                }
-                return '';
-            }
-
+            const buttons = document.querySelector('.action-buttons');
+            const controls = document.querySelectorAll('.signature-controls');
+            
+            // Esconder elementos que não devem aparecer no PDF
+            buttons.style.display = 'none';
+            controls.forEach(control => control.style.display = 'none');
+            
+            // Ajustar CSS dos inputs para melhor visualização no PDF
+            const allInputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="date"], select, textarea');
+            const originalStyles = [];
+            
+            allInputs.forEach((input, index) => {
+                // Salvar estilos originais
+                originalStyles[index] = {
+                    height: input.style.height,
+                    padding: input.style.padding,
+                    fontSize: input.style.fontSize,
+                    lineHeight: input.style.lineHeight,
+                    border: input.style.border
+                };
+                
+                // Aplicar estilos otimizados para captura
+                input.style.height = 'auto';
+                input.style.minHeight = '35px';
+                input.style.padding = '8px 12px';
+                input.style.fontSize = '14px';
+                input.style.lineHeight = '1.4';
+                input.style.border = '2px solid #3498db';
+                input.style.boxSizing = 'border-box';
+            });
+            
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             
-            // Configurações
-            const margin = 20;
-            const lineHeight = 6;
-            let currentY = margin;
+            // Elementos para capturar (em ordem)
+            const sections = [
+                '.header',
+                '.form-title', 
+                '.form-section:nth-of-type(1)', // Tipo de pedido
+                '.form-section:nth-of-type(2)', // Dados pessoais
+                '.form-section:nth-of-type(3)', // Situação maçónica  
+                '.form-section:nth-of-type(4)', // Documentação
+                '.form-section:nth-of-type(5)', // Habilitações
+                '.form-section:nth-of-type(6)', // Informações profissionais
+                '.form-section:nth-of-type(7)', // Declaração + assinatura
+                '.form-section:nth-of-type(8)', // Aprovação
+                '.documents-list'
+            ];
             
-            // Função para adicionar texto
-            function addText(text, x, y, fontSize = 10, isBold = false) {
-                if (isBold) pdf.setFont('helvetica', 'bold');
-                else pdf.setFont('helvetica', 'normal');
-                pdf.setFontSize(fontSize);
-                pdf.text(text, x, y);
-            }
+            let currentY = 0;
+            let pageHeight = 280; // Altura útil da página A4 (deixando margens)
+            let promises = [];
             
-            // Função para adicionar linha sublinhada com texto posicionado corretamente
-            function addUnderlinedField(label, value, x, y, width = 100) {
-                addText(label, x, y, 10, true);
-                const labelWidth = pdf.getTextWidth(label);
-                pdf.line(x + labelWidth + 2, y + 1, x + labelWidth + width, y + 1);
-                
-                if (value) {
-                    // Posicionar texto ligeiramente acima da linha para não ficar cortado
-                    const textY = y - 1; // Mover texto 1mm para cima
-                    const maxWidth = width - 10;
-                    const lines = pdf.splitTextToSize(value, maxWidth);
-                    
-                    if (lines.length === 1) {
-                        // Texto curto - uma linha
-                        addText(value, x + labelWidth + 5, textY);
-                        return y + lineHeight;
-                    } else {
-                        // Texto longo - múltiplas linhas
-                        addText(lines[0], x + labelWidth + 5, textY);
-                        let currentLineY = y + lineHeight;
+            // Capturar cada seção separadamente
+            sections.forEach((selector, index) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    const promise = html2canvas(element, {
+                        scale: 2, // Aumentar escala para melhor qualidade
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff',
+                        height: element.scrollHeight, // Usar altura completa do elemento
+                        width: element.scrollWidth,
+                        scrollX: 0,
+                        scrollY: 0
+                    }).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgWidth = 190; // Largura com margens
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
                         
-                        for (let i = 1; i < lines.length; i++) {
-                            pdf.line(x, currentLineY + 1, x + labelWidth + width, currentLineY + 1);
-                            addText(lines[i], x + 5, currentLineY - 1);
-                            currentLineY += lineHeight;
-                        }
-                        return currentLineY;
-                    }
+                        return { imgData, imgWidth, imgHeight, index };
+                    });
+                    promises.push(promise);
                 }
-                return y + lineHeight;
-            }
-            
-            // Cabeçalho
-            addText('ORDEM MAÇÓNICA MISTA INTERNACIONAL «LE DROIT HUMAIN»', 105, 25, 12, true);
-            addText('FEDERAÇÃO PORTUGUESA', 105, 35, 12, true);
-            currentY = 50;
-            
-            // Título
-            const title = formData.tipoPedido ? `FORMULÁRIO FP 1A - ${formData.tipoPedido}` : 'FORMULÁRIO FP 1A';
-            addText(title, 105, currentY, 14, true);
-            currentY += 20;
-            
-            // Dados pessoais
-            currentY = addUnderlinedField('Apelido(s): ', formData.apelidos, margin, currentY, 120);
-            currentY = addUnderlinedField('Nome(s) próprio(s): ', formData.nomes, margin, currentY, 120);
-            currentY = addUnderlinedField('Estado civil: ', formData.estadoCivil, margin, currentY, 80);
-            currentY = addUnderlinedField('Local e data de nascimento: ', formData.nascimento, margin, currentY, 100);
-            currentY = addUnderlinedField('Nacionalidade: ', formData.nacionalidade, margin, currentY, 80);
-            currentY = addUnderlinedField('Morada: ', formData.morada, margin, currentY, 120);
-            
-            // Localidade e código postal - ajustado para campos menores
-            addText('Localidade: ', margin, currentY, 10, true);
-            pdf.line(margin + 25, currentY + 1, margin + 75, currentY + 1);
-            if (formData.localidade) {
-                const localidadeText = pdf.splitTextToSize(formData.localidade, 45);
-                addText(localidadeText[0], margin + 28, currentY - 1);
-            }
-            
-            addText('Código postal: ', margin + 85, currentY, 10, true);
-            pdf.line(margin + 120, currentY + 1, margin + 155, currentY + 1);
-            if (formData.codigoPostal) addText(formData.codigoPostal, margin + 123, currentY - 1);
-            currentY += lineHeight;
-            
-            // Contactos - ajustados para melhor espaçamento e posicionamento
-            addText('Telemóvel: ', margin, currentY, 10, true);
-            pdf.line(margin + 23, currentY + 1, margin + 65, currentY + 1);
-            if (formData.telemovel) addText(formData.telemovel, margin + 26, currentY - 1);
-            
-            addText('Email: ', margin + 75, currentY, 10, true);
-            pdf.line(margin + 88, currentY + 1, margin + 170, currentY + 1);
-            if (formData.email) {
-                const emailText = pdf.splitTextToSize(formData.email, 75);
-                addText(emailText[0], margin + 91, currentY - 1);
-            }
-            currentY += lineHeight;
-            
-            addText('Telefone casa: ', margin, currentY, 10, true);
-            pdf.line(margin + 30, currentY + 1, margin + 70, currentY + 1);
-            if (formData.telefone) addText(formData.telefone, margin + 33, currentY - 1);
-            
-            addText('Telefone trabalho: ', margin + 80, currentY, 10, true);
-            pdf.line(margin + 120, currentY + 1, margin + 170, currentY + 1);
-            if (formData.telefoneTrabalho) addText(formData.telefoneTrabalho, margin + 123, currentY - 1);
-            currentY += 15;
-            
-            // Situação maçónica
-            addText('☐ Sou membro da Federação _______ do "Le Droit Humain" e desejo afiliar-me à Fed Port', margin, currentY);
-            if (formData.situacao1) addText('✓', margin + 1, currentY);
-            currentY += lineHeight;
-            
-            addText('☐ Sou membro da Obediência _______ e desejo ser integrado no "Le Droit Humain"', margin, currentY);
-            if (formData.situacao2) addText('✓', margin + 1, currentY);
-            currentY += lineHeight;
-            
-            addText('☐ Sou demissionário/irradiado do "Le Droit Humain", e desejo ser reintegrado na Fed Port', margin, currentY);
-            if (formData.situacao3) addText('✓', margin + 1, currentY);
-            currentY += lineHeight;
-            
-            addText('☐ Sou demissionário/irradiado de _______ e desejo retomar a actividade maçónica', margin, currentY);
-            if (formData.situacao4) addText('✓', margin + 1, currentY);
-            currentY += 15;
-            
-            // Documentação
-            const aqSim = formData.atestadoQuite === 'Sim';
-            const aqNao = formData.atestadoQuite === 'Não';
-            const phSim = formData.passaporteDH === 'Sim';
-            const phNao = formData.passaporteDH === 'Não';
-            
-            addText(`Apresenta atestado de quite: ${aqSim ? '☑' : '☐'} Sim ${aqNao ? '☑' : '☐'} Não`, margin, currentY);
-            addText(`Passaporte DH: ${phSim ? '☑' : '☐'} Sim ${phNao ? '☑' : '☐'} Não`, margin + 90, currentY);
-            currentY += lineHeight;
-            
-            if (formData.justificacao) {
-                addText('Se não, deve justificar:', margin, currentY, 10, true);
-                currentY += lineHeight;
-                addText(formData.justificacao, margin, currentY);
-                currentY += 10;
-            }
-            
-            // Declaração
-            currentY += 5;
-            const declaracao = 'Declaro ter tomado conhecimento da Declaração de Princípios da Ordem Maçónica Mista Internacional "LE DROIT HUMAIN", comprometendo-me a cumprir os deveres morais e a suportar os encargos materiais resultantes da minha entrada.';
-            const lines = pdf.splitTextToSize(declaracao, 170);
-            lines.forEach(line => {
-                addText(line, margin, currentY);
-                currentY += lineHeight;
             });
             
-            currentY += 10;
-            addText('Data: ' + formData.data, margin, currentY, 10, true);
-            currentY += 20;
-            
-            // Assinatura
-            addText('Assinatura do Irmão/Irmã', 105, currentY, 10, true);
-            currentY += 10;
-            pdf.line(70, currentY, 140, currentY);
-            currentY += 20;
-            
-            // Anexos
-            addText('A entregar em anexo:', margin, currentY, 10, true);
-            currentY += lineHeight;
-            addText('• Três fotografias tipo passe', margin + 5, currentY);
-            currentY += lineHeight;
-            addText('• Uma certidão de registo criminal', margin + 5, currentY);
-            currentY += lineHeight;
-            addText('• Uma certidão de nascimento narrativa completa', margin + 5, currentY);
-            
-            // PÁGINA 2
-            pdf.addPage();
-            currentY = margin;
-            
-            addText('HABILITAÇÕES:', margin, currentY, 12, true);
-            currentY += 10;
-            
-            addText(`${formData.ensinoBasico ? '☑' : '☐'} Ensino básico`, margin, currentY);
-            addText(`${formData.ensinoTecnico ? '☑' : '☐'} Ensino técnico`, margin + 70, currentY);
-            currentY += lineHeight;
-            
-            addText(`${formData.ensinoSecundario ? '☑' : '☐'} Ensino secundário`, margin, currentY);
-            addText(`${formData.ensinoSuperior ? '☑' : '☐'} Ensino superior`, margin + 70, currentY);
-            if (formData.cursoSuperior) addText('Qual: ' + formData.cursoSuperior, margin + 130, currentY);
-            currentY += 15;
-            
-            addText('OUTRAS:', margin, currentY, 12, true);
-            currentY += 10;
-            
-            currentY = addUnderlinedField('Profissão atual: ', formData.profissaoAtual, margin, currentY, 120);
-            currentY = addUnderlinedField('Profissão anterior: ', formData.profissaoAnterior, margin, currentY, 120);
-            currentY = addUnderlinedField('Nome do cônjuge: ', formData.conjuge, margin, currentY, 120);
-            
-            const cmSim = formData.conjugeMaconico === 'Sim';
-            const cmNao = formData.conjugeMaconico === 'Não';
-            addText(`Cônjuge maçon: ${cmSim ? '☑' : '☐'} Sim ${cmNao ? '☑' : '☐'} Não`, margin, currentY);
-            currentY += lineHeight;
-            
-            if (formData.ordemConjuge) {
-                currentY = addUnderlinedField('De qual ordem: ', formData.ordemConjuge, margin, currentY, 100);
-            }
-            
-            const ccSim = formData.conjugeCiente === 'Sim';
-            const ccNao = formData.conjugeCiente === 'Não';
-            addText(`Cônjuge ciente: ${ccSim ? '☑' : '☐'} Sim ${ccNao ? '☑' : '☐'} Não`, margin, currentY);
-            currentY += lineHeight;
-            
-            const tfSim = formData.temFilhos === 'Sim';
-            const tfNao = formData.temFilhos === 'Não';
-            addText(`Tem filhos: ${tfSim ? '☑' : '☐'} Sim ${tfNao ? '☑' : '☐'} Não`, margin, currentY);
-            if (formData.idadesFilhos) addText('Idades: ' + formData.idadesFilhos, margin + 70, currentY);
-            currentY += 10;
-            
-            if (formData.filantropia) {
-                currentY = addUnderlinedField('Obras filantrópicas: ', formData.filantropia, margin, currentY, 120);
-            }
-            
-            currentY += 20;
-            
-            // Aprovação
-            addText('Aprovado em _______________', margin, currentY);
-            addText('VM _______________', margin + 70, currentY);
-            addText('Sec Orad _______________', margin + 140, currentY);
-            
-            if (formData.loja) {
-                currentY += 10;
-                addText('Loja: ' + formData.loja, margin, currentY, 9);
-            }
-            
-            // Salvar PDF
-            const fileName = formData.apelidos ? 
-                `Formulario_FP1A_${formData.apelidos}_${new Date().toISOString().split('T')[0]}.pdf` : 
-                'Formulario_FP1A_Completo.pdf';
-            pdf.save(fileName);
+            Promise.all(promises).then(results => {
+                results.sort((a, b) => a.index - b.index);
+                
+                results.forEach((result, i) => {
+                    const { imgData, imgWidth, imgHeight } = result;
+                    
+                    // Se não couber na página atual, criar nova página
+                    if (currentY + imgHeight > pageHeight && currentY > 0) {
+                        pdf.addPage();
+                        currentY = 0;
+                    }
+                    
+                    // Adicionar a imagem
+                    pdf.addImage(imgData, 'PNG', 10, currentY + 10, imgWidth, imgHeight);
+                    currentY += imgHeight + 5; // Pequeno espaço entre seções
+                    
+                    // Forçar nova página após certas seções
+                    if (i === 6 || i === 8) { // Após declaração ou aprovação
+                        pdf.addPage();
+                        currentY = 0;
+                    }
+                });
+                
+                // Salvar PDF
+                const apelidos = document.getElementById('apelidos').value;
+                const fileName = apelidos ? 
+                    `Formulario_FP1A_${apelidos}_${new Date().toISOString().split('T')[0]}.pdf` : 
+                    'Formulario_FP1A_Completo.pdf';
+                pdf.save(fileName);
+                
+                // Restaurar estilos originais dos inputs
+                allInputs.forEach((input, index) => {
+                    const original = originalStyles[index];
+                    input.style.height = original.height;
+                    input.style.padding = original.padding;
+                    input.style.fontSize = original.fontSize;
+                    input.style.lineHeight = original.lineHeight;
+                    input.style.border = original.border;
+                });
+                
+                // Mostrar elementos novamente
+                buttons.style.display = 'flex';
+                controls.forEach(control => control.style.display = 'flex');
+            }).catch(error => {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF. Tente novamente.');
+                
+                // Restaurar estilos originais dos inputs em caso de erro
+                allInputs.forEach((input, index) => {
+                    const original = originalStyles[index];
+                    input.style.height = original.height;
+                    input.style.padding = original.padding;
+                    input.style.fontSize = original.fontSize;
+                    input.style.lineHeight = original.lineHeight;
+                    input.style.border = original.border;
+                });
+                
+                // Mostrar elementos novamente em caso de erro
+                buttons.style.display = 'flex';
+                controls.forEach(control => control.style.display = 'flex');
+            });
         }
 
 
