@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulários Maçónicos Online - Federação Portuguesa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header h2 {
+            font-size: 1.4rem;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .main-content {
+            padding: 60px 40px;
+        }
+
+        .forms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .form-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .form-card.fp05::before {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+
+        .form-card.fp05:hover {
+            border-color: #e74c3c;
+        }
+
+        .form-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .form-card.fp05 .form-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .form-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .form-card p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .form-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .intro-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .intro-section p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .features {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 60px;
+        }
+
+        .features h3 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .feature-item p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .instructions {
+            background: #e8f5e8;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .instructions h3 {
+            color: #155724;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .instructions ol {
+            color: #155724;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+            
+            .main-content {
+                padding: 30px 20px;
+            }
+            
+            .forms-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FORMULÁRIOS MAÇÓNICOS ONLINE</h1>
+            <h2>ORDEM MAÇÓNICA MISTA INTERNACIONAL «LE DROIT HUMAIN»</h2>
+            <p>FEDERAÇÃO PORTUGUESA - Sistema de Formulários Digitais</p>
+        </div>
+
+        <div class="main-content">
+            <div class="intro-section">
+                <h2>Bem-vindo ao Sistema de Formulários</h2>
+                <p>
+                    Acesse e preencha os formulários oficiais da Federação Portuguesa de forma fácil e segura. 
+                    Todos os formulários podem ser preenchidos online e exportados para Word sem necessidade de senhas.
+                </p>
+            </div>
+
+            <div class="forms-grid">
+                <!-- FORMULÁRIO FP 1A -->
+                <div class="form-card">
+                    <div class="form-icon">📋</div>
+                    <h3>Formulário FP 1A</h3>
+                    <p>
+                        <strong>Afiliação • Reintegração • Retoma de Actividade</strong><br>
+                        Formulário principal para pedidos de entrada, reingresso ou retoma de actividade maçónica.
+                    </p>
+                    <div class="form-buttons">
+                        <a href="formulario_fp1a_moderno.html" class="btn btn-primary" target="_blank">
+                            📝 Preencher Formulário
+                        </a>
+                        <button class="btn btn-success" onclick="downloadFP1ATemplate()">
+                            📥 Baixar Modelo Word
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FORMULÁRIO FP 05 -->
+                <div class="form-card fp05">
+                    <div class="form-icon">📧</div>
+                    <h3>Formulário FP 05</h3>
+                    <p>
+                        <strong>Notificação ao Colégio de Oficiais</strong><br>
+                        Formulário para notificar o colégio de oficiais sobre pedidos de afiliação ou reintegração.
+                    </p>
+                    <div class="form-buttons">
+                        <a href="formulario_fp05.html" class="btn btn-danger" target="_blank">
+                            📝 Preencher Formulário
+                        </a>
+                        <button class="btn btn-success" onclick="downloadFP05Template()">
+                            📥 Baixar Modelo Word
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INSTRUÇÕES -->
+            <div class="instructions">
+                <h3>📋 Como Usar os Formulários</h3>
+                <ol>
+                    <li><strong>Clique em "Preencher Formulário"</strong> para abrir o formulário online</li>
+                    <li><strong>Preencha todos os campos obrigatórios</strong> com suas informações</li>
+                    <li><strong>Faça upload do logótipo</strong> da sua loja (opcional)</li>
+                    <li><strong>Assine digitalmente</strong> no campo apropriado</li>
+                    <li><strong>Clique em "Exportar para Word"</strong> para baixar o arquivo preenchido</li>
+                    <li><strong>O arquivo Word gerado não tem senha</strong> e pode ser editado livremente</li>
+                </ol>
+            </div>
+
+            <!-- CARACTERÍSTICAS -->
+            <div class="features">
+                <h3>🌟 Características do Sistema</h3>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🖥️</div>
+                        <h4>Design Moderno</h4>
+                        <p>Interface moderna e responsiva que funciona em qualquer dispositivo</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">📱</div>
+                        <h4>Mobile Friendly</h4>
+                        <p>Otimizado para smartphones e tablets, preencha de qualquer lugar</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">🖊️</div>
+                        <h4>Assinatura Digital</h4>
+                        <p>Assine diretamente no navegador usando mouse ou touch screen</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">🏛️</div>
+                        <h4>Seleção de Lojas</h4>
+                        <p>Dropdown com todas as lojas da Federação Portuguesa</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">📸</div>
+                        <h4>Upload de Logótipos</h4>
+                        <p>Adicione facilmente o logótipo da sua loja ao formulário</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">📄</div>
+                        <h4>Export Word Livre</h4>
+                        <p>Baixe em Word sem senhas, pronto para edição e impressão</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para baixar template do FP1A
+        function downloadFP1ATemplate() {
+            // Criar um template Word básico do FP1A
+            const templateContent = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Formulário FP 1A - Template</title>
+                    <style>
+                        body { font-family: 'Times New Roman', serif; margin: 40px; line-height: 1.6; }
+                        .header { text-align: center; font-weight: bold; margin-bottom: 30px; }
+                        .section { margin-bottom: 25px; }
+                        .field { margin-bottom: 15px; }
+                        .label { font-weight: bold; display: inline-block; width: 200px; }
+                        .underline { border-bottom: 1px solid black; display: inline-block; min-width: 300px; height: 20px; }
+                        .checkbox { display: inline-block; width: 15px; height: 15px; border: 1px solid black; margin-right: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
+                        <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
+                        <h3>FORMULÁRIO FP 1A - AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE</h3>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>DADOS PESSOAIS</h3>
+                        <div class="field">
+                            <span class="label">Apelido(s):</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div class="field">
+                            <span class="label">Nome(s) próprio(s):</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div class="field">
+                            <span class="label">Estado civil:</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div class="field">
+                            <span class="label">Local e data de nascimento:</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div class="field">
+                            <span class="label">Nacionalidade:</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div class="field">
+                            <span class="label">Morada:</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div class="field">
+                            <span class="label">Localidade:</span>
+                            <span class="underline"></span>
+                            <span class="label">Código postal:</span>
+                            <span class="underline" style="width: 100px;"></span>
+                        </div>
+                        <div class="field">
+                            <span class="label">Telemóvel:</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div class="field">
+                            <span class="label">Email:</span>
+                            <span class="underline"></span>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>SITUAÇÃO MAÇÓNICA</h3>
+                        <div class="field">
+                            <span class="checkbox"></span>
+                            <span>Sou membro da Federação _________________ do "Le Droit Humain" e desejo afiliar-me à Fed Port</span>
+                        </div>
+                        <div class="field">
+                            <span class="checkbox"></span>
+                            <span>Sou membro da Obediência _________________ e desejo ser integrado no "Le Droit Humain"</span>
+                        </div>
+                        <div class="field">
+                            <span class="checkbox"></span>
+                            <span>Sou demissionário/irradiado do "Le Droit Humain", e desejo ser reintegrado(a) na Fed Port</span>
+                        </div>
+                        <div class="field">
+                            <span class="checkbox"></span>
+                            <span>Sou demissionário/irradiado de _________________ e desejo retomar a minha actividade maçónica</span>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>DOCUMENTAÇÃO</h3>
+                        <div class="field">
+                            <span class="label">Apresenta atestado de quite:</span>
+                            <span class="checkbox"></span>Sim
+                            <span class="checkbox"></span>Não
+                        </div>
+                        <div class="field">
+                            <span class="label">Apresenta passaporte do DH:</span>
+                            <span class="checkbox"></span>Sim
+                            <span class="checkbox"></span>Não
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>HABILITAÇÕES</h3>
+                        <div class="field">
+                            <span class="checkbox"></span>Ensino básico
+                            <span class="checkbox"></span>Ensino secundário
+                            <span class="checkbox"></span>Ensino técnico
+                            <span class="checkbox"></span>Ensino superior
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>DECLARAÇÃO</h3>
+                        <p>Declaro ter tomado conhecimento da Declaração de Princípios da Ordem Maçónica Mista Internacional "LE DROIT HUMAIN", "O DIREITO HUMANO", comprometendo-me a cumprir os deveres morais e a suportar os encargos materiais resultantes da minha entrada.</p>
+                        
+                        <div class="field">
+                            <span class="label">Data:</span>
+                            <span class="underline"></span>
+                        </div>
+                        
+                        <div style="margin-top: 40px; text-align: center;">
+                            <div>Assinatura do Irmão/Irmã</div>
+                            <div style="border-bottom: 1px solid black; width: 300px; height: 60px; margin: 20px auto;"></div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>DOCUMENTOS A ENTREGAR EM ANEXO:</h3>
+                        <ul>
+                            <li>Três fotografias tipo passe</li>
+                            <li>Uma certidão de registo criminal</li>
+                            <li>Uma certidão de nascimento narrativa completa</li>
+                        </ul>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([templateContent], {
+                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'Template_FP1A_Maconico.doc';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Função para baixar template do FP05
+        function downloadFP05Template() {
+            const templateContent = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Formulário FP 05 - Template</title>
+                    <style>
+                        body { font-family: 'Times New Roman', serif; margin: 40px; line-height: 1.6; }
+                        .header { text-align: center; font-weight: bold; margin-bottom: 30px; }
+                        .section { margin-bottom: 25px; border: 1px solid #ddd; padding: 15px; }
+                        .section-title { font-weight: bold; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; }
+                        .field { margin-bottom: 10px; }
+                        .label { font-weight: bold; display: inline-block; width: 150px; }
+                        .underline { border-bottom: 1px solid black; display: inline-block; min-width: 200px; height: 20px; }
+                        .officer-section { background-color: #f9f9f9; padding: 15px; margin-bottom: 15px; }
+                        .officer-title { font-weight: bold; color: #e74c3c; margin-bottom: 10px; text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
+                        <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
+                        <h3>FORMULÁRIO FP 05 - NOTIFICAÇÃO AO COLÉGIO DE OFICIAIS</h3>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">INFORMAÇÕES DA LOJA</div>
+                        <div class="field"><span class="label">Nome da Loja:</span><span class="underline"></span></div>
+                        <div class="field"><span class="label">Número da Loja:</span><span class="underline"></span></div>
+                        <div class="field"><span class="label">Endereço:</span><span class="underline"></span></div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">INFORMAÇÕES DO CANDIDATO</div>
+                        <div class="field"><span class="label">Nome:</span><span class="underline"></span></div>
+                        <div class="field"><span class="label">Tipo de Pedido:</span><span class="underline"></span></div>
+                        <div class="field"><span class="label">Email:</span><span class="underline"></span></div>
+                        <div class="field"><span class="label">Telefone:</span><span class="underline"></span></div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">COLÉGIO DE OFICIAIS</div>
+                        
+                        <div class="officer-section">
+                            <div class="officer-title">VENERÁVEL MESTRE</div>
+                            <div class="field"><span class="label">Nome:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Email:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Telefone:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Telemóvel:</span><span class="underline"></span></div>
+                        </div>
+                        
+                        <div class="officer-section">
+                            <div class="officer-title">PRIMEIRO VIGILANTE</div>
+                            <div class="field"><span class="label">Nome:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Email:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Telefone:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Telemóvel:</span><span class="underline"></span></div>
+                        </div>
+                        
+                        <div class="officer-section">
+                            <div class="officer-title">SEGUNDO VIGILANTE</div>
+                            <div class="field"><span class="label">Nome:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Email:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Telefone:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Telemóvel:</span><span class="underline"></span></div>
+                        </div>
+                        
+                        <div class="officer-section">
+                            <div class="officer-title">SECRETÁRIO ORADOR</div>
+                            <div class="field"><span class="label">Nome:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Email:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Telefone:</span><span class="underline"></span></div>
+                            <div class="field"><span class="label">Telemóvel:</span><span class="underline"></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">OBSERVAÇÕES</div>
+                        <div style="border: 1px solid #ddd; height: 100px; margin-top: 10px;"></div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">DATA E RESPONSÁVEL</div>
+                        <div class="field"><span class="label">Data:</span><span class="underline"></span></div>
+                        <div class="field"><span class="label">Responsável:</span><span class="underline"></span></div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([templateContent], {
+                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'Template_FP05_Notificacao.doc';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
