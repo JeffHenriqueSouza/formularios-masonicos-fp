@@ -921,7 +921,7 @@
             window.print();
         }
 
-        // Função para gerar PDF com captura de screenshot
+        // Função para gerar PDF com quebras de página corretas e inputs otimizados
         function generatePDF() {
             const buttons = document.querySelector('.action-buttons');
             const controls = document.querySelectorAll('.signature-controls');
@@ -941,17 +941,21 @@
                     padding: input.style.padding,
                     fontSize: input.style.fontSize,
                     lineHeight: input.style.lineHeight,
-                    border: input.style.border
+                    border: input.style.border,
+                    minHeight: input.style.minHeight,
+                    overflow: input.style.overflow
                 };
                 
                 // Aplicar estilos otimizados para captura
                 input.style.height = 'auto';
-                input.style.minHeight = '35px';
-                input.style.padding = '8px 12px';
-                input.style.fontSize = '14px';
-                input.style.lineHeight = '1.4';
-                input.style.border = '2px solid #3498db';
+                input.style.minHeight = '40px';
+                input.style.padding = '10px 12px';
+                input.style.fontSize = '16px';
+                input.style.lineHeight = '1.5';
+                input.style.border = '2px solid #ddd';
+                input.style.borderRadius = '4px';
                 input.style.boxSizing = 'border-box';
+                input.style.overflow = 'visible';
             });
             
             const { jsPDF } = window.jspdf;
@@ -981,14 +985,23 @@
                 const element = document.querySelector(selector);
                 if (element) {
                     const promise = html2canvas(element, {
-                        scale: 2, // Aumentar escala para melhor qualidade
+                        scale: 1.5,
                         useCORS: true,
                         allowTaint: true,
                         backgroundColor: '#ffffff',
-                        height: element.scrollHeight, // Usar altura completa do elemento
-                        width: element.scrollWidth,
-                        scrollX: 0,
-                        scrollY: 0
+                        logging: false,
+                        onclone: function(clonedDoc) {
+                            // Garantir que inputs apareçam corretamente no clone
+                            const clonedInputs = clonedDoc.querySelectorAll('input, select, textarea');
+                            clonedInputs.forEach(input => {
+                                input.style.minHeight = '40px';
+                                input.style.padding = '10px 12px';
+                                input.style.fontSize = '16px';
+                                input.style.lineHeight = '1.5';
+                                input.style.border = '2px solid #ddd';
+                                input.style.overflow = 'visible';
+                            });
+                        }
                     }).then(canvas => {
                         const imgData = canvas.toDataURL('image/png');
                         const imgWidth = 190; // Largura com margens
@@ -1023,12 +1036,7 @@
                     }
                 });
                 
-                // Salvar PDF
-                const apelidos = document.getElementById('apelidos').value;
-                const fileName = apelidos ? 
-                    `Formulario_FP1A_${apelidos}_${new Date().toISOString().split('T')[0]}.pdf` : 
-                    'Formulario_FP1A_Completo.pdf';
-                pdf.save(fileName);
+                pdf.save('Formulario_FP1A_Completo.pdf');
                 
                 // Restaurar estilos originais dos inputs
                 allInputs.forEach((input, index) => {
@@ -1038,6 +1046,8 @@
                     input.style.fontSize = original.fontSize;
                     input.style.lineHeight = original.lineHeight;
                     input.style.border = original.border;
+                    input.style.minHeight = original.minHeight;
+                    input.style.overflow = original.overflow;
                 });
                 
                 // Mostrar elementos novamente
@@ -1055,6 +1065,8 @@
                     input.style.fontSize = original.fontSize;
                     input.style.lineHeight = original.lineHeight;
                     input.style.border = original.border;
+                    input.style.minHeight = original.minHeight;
+                    input.style.overflow = original.overflow;
                 });
                 
                 // Mostrar elementos novamente em caso de erro
