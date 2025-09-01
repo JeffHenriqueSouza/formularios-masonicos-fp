@@ -44,7 +44,7 @@
         .logo-upload {
             position: absolute;
             top: 20px;
-            right: 20px;
+            left: 20px;
             width: 100px;
             height: 80px;
             border: 2px dashed rgba(255,255,255,0.3);
@@ -426,6 +426,29 @@
         </div>
 
         <div class="form-content">
+            <!-- TIPO DE PEDIDO -->
+            <div class="form-section" style="text-align: center;">
+                <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.2rem; font-weight: 600; color: #2c3e50;">
+                        <input type="checkbox" id="afiliacao" name="tipoPedidoFP1A" value="afiliacao" 
+                               style="width: 20px; height: 20px; cursor: pointer;" onchange="selectOnlyOne('afiliacao')">
+                        <span>AFILIAÇÃO</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.2rem; font-weight: 600; color: #2c3e50;">
+                        <input type="checkbox" id="reintegracao" name="tipoPedidoFP1A" value="reintegracao" 
+                               style="width: 20px; height: 20px; cursor: pointer;" onchange="selectOnlyOne('reintegracao')">
+                        <span>REINTEGRAÇÃO</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.2rem; font-weight: 600; color: #2c3e50;">
+                        <input type="checkbox" id="retoma" name="tipoPedidoFP1A" value="retoma" 
+                               style="width: 20px; height: 20px; cursor: pointer;" onchange="selectOnlyOne('retoma')">
+                        <span>RETOMA DE ACTIVIDADE</span>
+                    </label>
+                </div>
+            </div>
+
             <!-- DADOS PESSOAIS -->
             <div class="form-section">
                 <h3 class="section-title">DADOS PESSOAIS</h3>
@@ -947,6 +970,8 @@
         function exportToWord() {
             // Coletar TODOS os dados do formulário
             const formData = {
+                // Tipo de Pedido
+                tipoPedido: getTipoPedido(),
                 apelidos: document.getElementById('apelidos').value || '',
                 nomes: document.getElementById('nomes').value || '',
                 estadoCivil: document.getElementById('estadoCivil').options[document.getElementById('estadoCivil').selectedIndex]?.text || '',
@@ -1161,7 +1186,7 @@
     </div>
 
     <div class="title">
-        AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE
+        FORMULÁRIO FP 1A - ${formData.tipoPedido || 'AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE'}
     </div>
 
     <div class="form-row">
@@ -1406,6 +1431,24 @@
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
+        }
+
+        // Função para permitir apenas uma seleção nos checkboxes do tipo de pedido
+        function selectOnlyOne(selectedId) {
+            const checkboxes = ['afiliacao', 'reintegracao', 'retoma'];
+            checkboxes.forEach(id => {
+                if (id !== selectedId) {
+                    document.getElementById(id).checked = false;
+                }
+            });
+        }
+
+        // Função para obter o tipo de pedido selecionado
+        function getTipoPedido() {
+            if (document.getElementById('afiliacao').checked) return 'AFILIAÇÃO';
+            if (document.getElementById('reintegracao').checked) return 'REINTEGRAÇÃO';
+            if (document.getElementById('retoma').checked) return 'RETOMA DE ACTIVIDADE';
+            return '';
         }
 
         // Auto-fill data atual
