@@ -821,7 +821,6 @@
             <!-- BOTÕES DE AÇÃO -->
             <div class="action-buttons">
                 <button type="button" class="btn btn-primary" onclick="previewForm()">Pré-visualizar</button>
-                <button type="button" class="btn btn-success" onclick="exportToWord()">Exportar para Word</button>
                 <button type="button" class="btn btn-primary" onclick="generatePDF()">Gerar PDF</button>
                 <button type="button" class="btn btn-secondary" onclick="clearForm()">Limpar Formulário</button>
             </div>
@@ -922,99 +921,10 @@
             window.print();
         }
 
-        // Função para gerar PDF com quebras de página corretas
+        // Função para gerar PDF com dados do formulário
         function generatePDF() {
-            const buttons = document.querySelector('.action-buttons');
-            const controls = document.querySelectorAll('.signature-controls');
-            
-            // Esconder elementos que não devem aparecer no PDF
-            buttons.style.display = 'none';
-            controls.forEach(control => control.style.display = 'none');
-            
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            
-            // Elementos para capturar (em ordem)
-            const sections = [
-                '.header',
-                '.form-title', 
-                '.form-section:nth-of-type(1)', // Tipo de pedido
-                '.form-section:nth-of-type(2)', // Dados pessoais
-                '.form-section:nth-of-type(3)', // Situação maçónica  
-                '.form-section:nth-of-type(4)', // Documentação
-                '.form-section:nth-of-type(5)', // Habilitações
-                '.form-section:nth-of-type(6)', // Informações profissionais
-                '.form-section:nth-of-type(7)', // Declaração + assinatura
-                '.form-section:nth-of-type(8)', // Aprovação
-                '.documents-list'
-            ];
-            
-            let currentY = 0;
-            let pageHeight = 280; // Altura útil da página A4 (deixando margens)
-            let promises = [];
-            
-            // Capturar cada seção separadamente
-            sections.forEach((selector, index) => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    const promise = html2canvas(element, {
-                        scale: 1.5,
-                        useCORS: true,
-                        allowTaint: true
-                    }).then(canvas => {
-                        const imgData = canvas.toDataURL('image/png');
-                        const imgWidth = 190; // Largura com margens
-                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                        
-                        return { imgData, imgWidth, imgHeight, index };
-                    });
-                    promises.push(promise);
-                }
-            });
-            
-            Promise.all(promises).then(results => {
-                results.sort((a, b) => a.index - b.index);
-                
-                results.forEach((result, i) => {
-                    const { imgData, imgWidth, imgHeight } = result;
-                    
-                    // Se não couber na página atual, criar nova página
-                    if (currentY + imgHeight > pageHeight && currentY > 0) {
-                        pdf.addPage();
-                        currentY = 0;
-                    }
-                    
-                    // Adicionar a imagem
-                    pdf.addImage(imgData, 'PNG', 10, currentY + 10, imgWidth, imgHeight);
-                    currentY += imgHeight + 5; // Pequeno espaço entre seções
-                    
-                    // Forçar nova página após certas seções
-                    if (i === 6 || i === 8) { // Após declaração ou aprovação
-                        pdf.addPage();
-                        currentY = 0;
-                    }
-                });
-                
-                pdf.save('Formulario_FP1A_Completo.pdf');
-                
-                // Mostrar elementos novamente
-                buttons.style.display = 'flex';
-                controls.forEach(control => control.style.display = 'flex');
-            }).catch(error => {
-                console.error('Erro ao gerar PDF:', error);
-                alert('Erro ao gerar PDF. Tente novamente.');
-                
-                // Mostrar elementos novamente em caso de erro
-                buttons.style.display = 'flex';
-                controls.forEach(control => control.style.display = 'flex');
-            });
-        }
-
-        // Função para exportar para Word
-        function exportToWord() {
-            // Coletar TODOS os dados do formulário
+            // Coletar dados do formulário
             const formData = {
-                // Tipo de Pedido
                 tipoPedido: getTipoPedido(),
                 apelidos: document.getElementById('apelidos').value || '',
                 nomes: document.getElementById('nomes').value || '',
@@ -1028,22 +938,18 @@
                 telefone: document.getElementById('telefone').value || '',
                 telefoneTrabalho: document.getElementById('telefoneTrabalho').value || '',
                 email: document.getElementById('email').value || '',
-                // Situação Maçónica
-                situacao1: document.getElementById('situacao1').checked ? '✓' : '☐',
-                situacao2: document.getElementById('situacao2').checked ? '✓' : '☐',
-                situacao3: document.getElementById('situacao3').checked ? '✓' : '☐',
-                situacao4: document.getElementById('situacao4').checked ? '✓' : '☐',
-                // Documentação
+                situacao1: document.getElementById('situacao1').checked,
+                situacao2: document.getElementById('situacao2').checked,
+                situacao3: document.getElementById('situacao3').checked,
+                situacao4: document.getElementById('situacao4').checked,
                 atestadoQuite: getRadioValue('atestadoQuite'),
                 passaporteDH: getRadioValue('passaporteDH'),
                 justificacao: document.getElementById('justificacao').value || '',
-                // Habilitações
-                ensinoBasico: document.getElementById('ensino_basico').checked ? '✓' : '☐',
-                ensinoSecundario: document.getElementById('ensino_secundario').checked ? '✓' : '☐',
-                ensinoTecnico: document.getElementById('ensino_tecnico').checked ? '✓' : '☐',
-                ensinoSuperior: document.getElementById('ensino_superior').checked ? '✓' : '☐',
+                ensinoBasico: document.getElementById('ensino_basico').checked,
+                ensinoSecundario: document.getElementById('ensino_secundario').checked,
+                ensinoTecnico: document.getElementById('ensino_tecnico').checked,
+                ensinoSuperior: document.getElementById('ensino_superior').checked,
                 cursoSuperior: document.getElementById('cursoSuperior').value || '',
-                // Informações profissionais e familiares
                 profissaoAtual: document.getElementById('profissaoAtual').value || '',
                 profissaoAnterior: document.getElementById('profissaoAnterior').value || '',
                 conjuge: document.getElementById('conjuge').value || '',
@@ -1065,417 +971,208 @@
                 return '';
             }
 
-            let htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Formulário FP 1A - Ordem Maçónica</title>
-    <style>
-        body {
-            font-family: Times, serif;
-            font-size: 12pt;
-            line-height: 1.3;
-            max-width: 8.5in;
-            margin: 0 auto;
-            padding: 1in;
-            background: white;
-            color: black;
-        }
-        
-        .header {
-            text-align: center;
-            font-weight: bold;
-            font-size: 14pt;
-            margin-bottom: 20pt;
-            line-height: 1.2;
-        }
-        
-        .title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 13pt;
-            text-decoration: underline;
-            margin: 25pt 0;
-        }
-        
-        .form-row {
-            margin-bottom: 12pt;
-            line-height: 1.4;
-        }
-        
-        .form-label {
-            font-weight: bold;
-        }
-        
-        .underline-field {
-            border-bottom: 1pt solid black;
-            display: inline-block;
-            min-width: 200pt;
-            height: 16pt;
-            margin-left: 5pt;
-            padding: 2pt;
-        }
-        
-        .checkbox {
-            display: inline-block;
-            width: 12pt;
-            height: 12pt;
-            border: 1pt solid black;
-            margin-right: 5pt;
-            vertical-align: middle;
-        }
-        
-        .signature-area {
-            margin: 30pt 0;
-            text-align: center;
-        }
-        
-        .signature-box {
-            border-bottom: 1pt solid black;
-            width: 300pt;
-            height: 60pt;
-            margin: 0 auto;
-            display: block;
-        }
-        
-        .logo-placeholder {
-            position: absolute;
-            top: 20pt;
-            right: 20pt;
-            width: 100pt;
-            height: 80pt;
-            border: 1pt dashed #666;
-            text-align: center;
-            font-size: 8pt;
-            color: #666;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .stamp-placeholder {
-            position: absolute;
-            bottom: 100pt;
-            right: 50pt;
-            width: 120pt;
-            height: 80pt;
-            border: 1pt dashed #666;
-            text-align: center;
-            font-size: 10pt;
-            color: #666;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .page-break {
-            page-break-before: always;
-            margin-top: 50pt;
-        }
-        
-        .approval-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40pt;
-        }
-        
-        .approval-box {
-            text-align: center;
-            width: 150pt;
-        }
-        
-        .approval-line {
-            border-bottom: 1pt solid black;
-            height: 40pt;
-            margin-bottom: 5pt;
-        }
-        
-        .footer-info {
-            position: fixed;
-            bottom: 30pt;
-            right: 30pt;
-            font-weight: bold;
-            font-size: 10pt;
-        }
-        
-        .dropdown-options {
-            font-style: italic;
-            color: #666;
-            font-size: 10pt;
-        }
-        
-        @page {
-            size: A4;
-            margin: 1in;
-        }
-        
-        @media print {
-            body {
-                margin: 0;
-                padding: 1in;
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            // Configurações
+            const margin = 20;
+            const lineHeight = 6;
+            let currentY = margin;
+            
+            // Função para adicionar texto
+            function addText(text, x, y, fontSize = 10, isBold = false) {
+                if (isBold) pdf.setFont('helvetica', 'bold');
+                else pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(fontSize);
+                pdf.text(text, x, y);
             }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="logo-placeholder">
-        LOGÓTIPO<br>DA LOJA
-    </div>
-
-    <div class="header">
-        ORDEM MAÇÓNICA MISTA INTERNACIONAL «LE DROIT HUMAIN»<br>
-        FEDERAÇÃO PORTUGUESA
-    </div>
-
-    <div class="title">
-        FORMULÁRIO FP 1A - ${formData.tipoPedido || 'AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE'}
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Apelido(s):</span>
-        <span class="underline-field">${formData.apelidos}</span>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Nome(s) próprio(s):</span>
-        <span class="underline-field">${formData.nomes}</span>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Estado civil:</span>
-        <span class="underline-field">${formData.estadoCivil}</span>
-        <div class="dropdown-options">
-            [Opções: Solteiro(a), Casado(a), Divorciado(a), Viúvo(a), União de facto]
-        </div>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Local e data de nascimento:</span>
-        <span class="underline-field">${formData.nascimento}</span>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Nacionalidade:</span>
-        <span class="underline-field">${formData.nacionalidade}</span>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Morada:</span>
-        <span class="underline-field">${formData.morada}</span>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Localidade:</span>
-        <span class="underline-field" style="width: 200pt;">${formData.localidade}</span>
-        <span class="form-label" style="margin-left: 20pt;">Código postal:</span>
-        <span class="underline-field" style="width: 120pt;">${formData.codigoPostal}</span>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Telemóvel:</span>
-        <span class="underline-field" style="width: 120pt;">${formData.telemovel}</span>
-        <span class="form-label" style="margin-left: 20pt;">Email:</span>
-        <span class="underline-field" style="width: 250pt;">${formData.email}</span>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Telefone casa:</span>
-        <span class="underline-field" style="width: 120pt;">${formData.telefone}</span>
-        <span class="form-label" style="margin-left: 20pt;">Telefone do trabalho:</span>
-        <span class="underline-field" style="width: 120pt;">${formData.telefoneTrabalho}</span>
-    </div>
-
-    <div style="margin: 20pt 0;">
-        <div class="form-row">
-            <span class="checkbox">${formData.situacao1}</span>
-            <span>Sou membro da Federação </span>
-            <span class="underline-field" style="width: 150pt;"></span>
-            <span> do "Le Droit Humain e desejo afiliar-me à Fed Port</span>
-            <div class="dropdown-options">
-                [Opções: Francesa, Belga, Suíça, Brasileira, Italiana, Espanhola, Outra]
-            </div>
-        </div>
-
-        <div class="form-row">
-            <span class="checkbox">${formData.situacao2}</span>
-            <span>Sou membro da Obediência </span>
-            <span class="underline-field" style="width: 300pt;"></span>
-            <span> e desejo ser integrado no "Le Droit Humain"</span>
-        </div>
-
-        <div class="form-row">
-            <span class="checkbox">${formData.situacao3}</span>
-            <span>Sou demissionário/irradiado do "Le Droit Humain", e desejo ser reintegrado(a) na Fed Port</span>
-        </div>
-
-        <div class="form-row">
-            <span class="checkbox">${formData.situacao4}</span>
-            <span>Sou demissionário/irradiado de </span>
-            <span class="underline-field" style="width: 300pt;"></span>,<br>
-            <span style="margin-left: 17pt;">e desejo retomar a minha actividade maçónica</span>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Apresenta atestado de quite:</span>
-        <span class="checkbox">${formData.atestadoQuite === 'Sim' ? '✓' : ''}</span><span>Sim</span>
-        <span class="checkbox" style="margin-left: 20pt;">${formData.atestadoQuite === 'Não' ? '✓' : ''}</span><span>Não</span>
-        <span class="form-label" style="margin-left: 30pt;">Apresenta passaporte do DH:</span>
-        <span class="checkbox">${formData.passaporteDH === 'Sim' ? '✓' : ''}</span><span>Sim</span>
-        <span class="checkbox" style="margin-left: 20pt;">${formData.passaporteDH === 'Não' ? '✓' : ''}</span><span>Não</span>
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Se não, deve justificar:</span><br>
-        <span class="underline-field" style="width: 100%; height: 40pt; display: block; margin-top: 5pt;">${formData.justificacao}</span>
-        <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;"></span>
-    </div>
-
-    <div style="margin: 25pt 0; text-align: justify;">
-        Declaro ter tomado conhecimento da Declaração de Princípios da Ordem Maçónica Mista Internacional "LE DROIT
-        HUMAIN", "O DIREITO HUMANO", comprometendo-me a cumprir os deveres morais e a suportar os encargos 
-        materiais resultantes da minha entrada.
-    </div>
-
-    <div class="form-row">
-        <span class="form-label">Data:</span>
-        <span class="underline-field" style="width: 150pt;">${formData.data}</span>
-    </div>
-
-    <div class="signature-area">
-        <div style="font-weight: bold; margin-bottom: 10pt;">Assinatura do Irmão/Irmã</div>
-        <div class="signature-box"></div>
-    </div>
-
-    <div style="margin-top: 20pt; font-size: 11pt;">
-        <strong>A entregar em anexo:</strong><br>
-        • Três fotografias tipo passe;<br>
-        • Uma certidão de registo criminal;<br>
-        • Uma certidão de nascimento narrativa completa.
-    </div>
-
-    <!-- PÁGINA 2 -->
-    <div class="page-break">
-        <div class="form-row">
-            <span class="form-label" style="text-decoration: underline; font-size: 13pt;">HABILITAÇÕES:</span>
-        </div>
-
-        <div style="margin: 20pt 0;">
-            <div class="form-row">
-                <span class="checkbox">${formData.ensinoBasico}</span><span>Ensino básico</span>
-                <span class="checkbox" style="margin-left: 40pt;">${formData.ensinoTecnico}</span><span>Ensino técnico</span>
-            </div>
-            <div class="form-row">
-                <span class="checkbox">${formData.ensinoSecundario}</span><span>Ensino secundário</span>
-                <span class="checkbox" style="margin-left: 40pt;">${formData.ensinoSuperior}</span><span>Ensino superior</span>
-                <span class="form-label" style="margin-left: 20pt;">Qual:</span>
-                <span class="underline-field" style="width: 200pt;">${formData.cursoSuperior}</span>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label" style="text-decoration: underline; font-size: 13pt;">OUTRAS:</span>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">Que profissão(ões) exerce, e onde?</span><br>
-            <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;">${formData.profissaoAtual}</span>
-            <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;"></span>
-            <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;"></span>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">Que profissão(ões) já exerceu, e onde?</span><br>
-            <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;">${formData.profissaoAnterior}</span>
-            <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;"></span>
-            <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;"></span>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">Apelido e nome do cônjuge:</span>
-            <span class="underline-field" style="width: 350pt;">${formData.conjuge}</span>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">O conjugue faz parte de uma Ordem maçónica?</span>
-            <span class="checkbox" style="margin-left: 20pt;">${formData.conjugeMaconico === 'Sim' ? '✓' : ''}</span><span>Sim</span>
-            <span class="checkbox" style="margin-left: 20pt;">${formData.conjugeMaconico === 'Não' ? '✓' : ''}</span><span>Não</span>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">Em caso afirmativo, de qual?</span>
-            <span class="underline-field" style="width: 300pt;">${formData.ordemConjuge}</span>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">Ele/ela está ao corrente do seu pedido?</span>
-            <span class="checkbox" style="margin-left: 20pt;">${formData.conjugeCiente === 'Sim' ? '✓' : ''}</span><span>Sim</span>
-            <span class="checkbox" style="margin-left: 20pt;">${formData.conjugeCiente === 'Não' ? '✓' : ''}</span><span>Não</span>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">Tem filhos?</span>
-            <span class="checkbox" style="margin-left: 20pt;">${formData.temFilhos === 'Sim' ? '✓' : ''}</span><span>Sim</span>
-            <span class="checkbox" style="margin-left: 20pt;">${formData.temFilhos === 'Não' ? '✓' : ''}</span><span>Não</span>
-            <span class="form-label" style="margin-left: 40pt;">Idades:</span>
-            <span class="underline-field" style="width: 150pt;">${formData.idadesFilhos}</span>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">Dedica-se a obras filantrópicas? Quais?</span><br>
-            <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;">${formData.filantropia}</span>
-            <span class="underline-field" style="width: 100%; height: 20pt; display: block; margin-top: 5pt;"></span>
-        </div>
-
-        <div class="approval-section">
-            <div class="approval-box">
-                <div class="approval-line"></div>
-                <div><strong>Aprovado em</strong></div>
-            </div>
-
-            <div class="approval-box">
-                <div class="approval-line"></div>
-                <div><strong>VM</strong></div>
-                <div class="dropdown-options" style="margin-top: 5pt;">
-                    [${formData.loja || 'Loja Acácia Nº 1, Loja Liberdade Nº 2, Loja Fraternidade Nº 3, Loja Igualdade Nº 4, Loja Harmonia Nº 5, Outra'}]
-                </div>
-            </div>
-
-            <div class="approval-box">
-                <div class="approval-line"></div>
-                <div><strong>Sec Orad</strong></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="stamp-placeholder">
-        Carimbo<br>da Loja
-    </div>
-
-    <div class="footer-info">
-        Formulário Nº 1A da FP
-    </div>
-
-</body>
-</html>`;
-
-            // Criar e baixar o arquivo
-            const blob = new Blob([htmlContent], {
-                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            
+            // Função para adicionar linha sublinhada
+            function addUnderlinedField(label, value, x, y, width = 100) {
+                addText(label, x, y, 10, true);
+                const labelWidth = pdf.getTextWidth(label);
+                pdf.line(x + labelWidth + 2, y + 1, x + labelWidth + width, y + 1);
+                if (value) {
+                    addText(value, x + labelWidth + 5, y);
+                }
+                return y + lineHeight;
+            }
+            
+            // Cabeçalho
+            addText('ORDEM MAÇÓNICA MISTA INTERNACIONAL «LE DROIT HUMAIN»', 105, 25, 12, true);
+            addText('FEDERAÇÃO PORTUGUESA', 105, 35, 12, true);
+            currentY = 50;
+            
+            // Título
+            const title = formData.tipoPedido ? `FORMULÁRIO FP 1A - ${formData.tipoPedido}` : 'FORMULÁRIO FP 1A';
+            addText(title, 105, currentY, 14, true);
+            currentY += 20;
+            
+            // Dados pessoais
+            currentY = addUnderlinedField('Apelido(s): ', formData.apelidos, margin, currentY, 120);
+            currentY = addUnderlinedField('Nome(s) próprio(s): ', formData.nomes, margin, currentY, 120);
+            currentY = addUnderlinedField('Estado civil: ', formData.estadoCivil, margin, currentY, 80);
+            currentY = addUnderlinedField('Local e data de nascimento: ', formData.nascimento, margin, currentY, 100);
+            currentY = addUnderlinedField('Nacionalidade: ', formData.nacionalidade, margin, currentY, 80);
+            currentY = addUnderlinedField('Morada: ', formData.morada, margin, currentY, 120);
+            
+            // Localidade e código postal na mesma linha
+            addText('Localidade: ', margin, currentY, 10, true);
+            pdf.line(margin + 25, currentY + 1, margin + 80, currentY + 1);
+            if (formData.localidade) addText(formData.localidade, margin + 28, currentY);
+            
+            addText('Código postal: ', margin + 90, currentY, 10, true);
+            pdf.line(margin + 125, currentY + 1, margin + 160, currentY + 1);
+            if (formData.codigoPostal) addText(formData.codigoPostal, margin + 128, currentY);
+            currentY += lineHeight;
+            
+            // Contactos
+            addText('Telemóvel: ', margin, currentY, 10, true);
+            pdf.line(margin + 23, currentY + 1, margin + 70, currentY + 1);
+            if (formData.telemovel) addText(formData.telemovel, margin + 26, currentY);
+            
+            addText('Email: ', margin + 80, currentY, 10, true);
+            pdf.line(margin + 95, currentY + 1, margin + 170, currentY + 1);
+            if (formData.email) addText(formData.email, margin + 98, currentY);
+            currentY += lineHeight;
+            
+            addText('Telefone casa: ', margin, currentY, 10, true);
+            pdf.line(margin + 30, currentY + 1, margin + 75, currentY + 1);
+            if (formData.telefone) addText(formData.telefone, margin + 33, currentY);
+            
+            addText('Telefone trabalho: ', margin + 85, currentY, 10, true);
+            pdf.line(margin + 125, currentY + 1, margin + 170, currentY + 1);
+            if (formData.telefoneTrabalho) addText(formData.telefoneTrabalho, margin + 128, currentY);
+            currentY += 15;
+            
+            // Situação maçónica
+            addText('☐ Sou membro da Federação _______ do "Le Droit Humain" e desejo afiliar-me à Fed Port', margin, currentY);
+            if (formData.situacao1) addText('✓', margin + 1, currentY);
+            currentY += lineHeight;
+            
+            addText('☐ Sou membro da Obediência _______ e desejo ser integrado no "Le Droit Humain"', margin, currentY);
+            if (formData.situacao2) addText('✓', margin + 1, currentY);
+            currentY += lineHeight;
+            
+            addText('☐ Sou demissionário/irradiado do "Le Droit Humain", e desejo ser reintegrado na Fed Port', margin, currentY);
+            if (formData.situacao3) addText('✓', margin + 1, currentY);
+            currentY += lineHeight;
+            
+            addText('☐ Sou demissionário/irradiado de _______ e desejo retomar a actividade maçónica', margin, currentY);
+            if (formData.situacao4) addText('✓', margin + 1, currentY);
+            currentY += 15;
+            
+            // Documentação
+            const aqSim = formData.atestadoQuite === 'Sim';
+            const aqNao = formData.atestadoQuite === 'Não';
+            const phSim = formData.passaporteDH === 'Sim';
+            const phNao = formData.passaporteDH === 'Não';
+            
+            addText(`Apresenta atestado de quite: ${aqSim ? '☑' : '☐'} Sim ${aqNao ? '☑' : '☐'} Não`, margin, currentY);
+            addText(`Passaporte DH: ${phSim ? '☑' : '☐'} Sim ${phNao ? '☑' : '☐'} Não`, margin + 90, currentY);
+            currentY += lineHeight;
+            
+            if (formData.justificacao) {
+                addText('Se não, deve justificar:', margin, currentY, 10, true);
+                currentY += lineHeight;
+                addText(formData.justificacao, margin, currentY);
+                currentY += 10;
+            }
+            
+            // Declaração
+            currentY += 5;
+            const declaracao = 'Declaro ter tomado conhecimento da Declaração de Princípios da Ordem Maçónica Mista Internacional "LE DROIT HUMAIN", comprometendo-me a cumprir os deveres morais e a suportar os encargos materiais resultantes da minha entrada.';
+            const lines = pdf.splitTextToSize(declaracao, 170);
+            lines.forEach(line => {
+                addText(line, margin, currentY);
+                currentY += lineHeight;
             });
             
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `Formulario_FP1A_${formData.apelidos || 'Profissional'}_${new Date().toISOString().split('T')[0]}.doc`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            currentY += 10;
+            addText('Data: ' + formData.data, margin, currentY, 10, true);
+            currentY += 20;
+            
+            // Assinatura
+            addText('Assinatura do Irmão/Irmã', 105, currentY, 10, true);
+            currentY += 10;
+            pdf.line(70, currentY, 140, currentY);
+            currentY += 20;
+            
+            // Anexos
+            addText('A entregar em anexo:', margin, currentY, 10, true);
+            currentY += lineHeight;
+            addText('• Três fotografias tipo passe', margin + 5, currentY);
+            currentY += lineHeight;
+            addText('• Uma certidão de registo criminal', margin + 5, currentY);
+            currentY += lineHeight;
+            addText('• Uma certidão de nascimento narrativa completa', margin + 5, currentY);
+            
+            // PÁGINA 2
+            pdf.addPage();
+            currentY = margin;
+            
+            addText('HABILITAÇÕES:', margin, currentY, 12, true);
+            currentY += 10;
+            
+            addText(`${formData.ensinoBasico ? '☑' : '☐'} Ensino básico`, margin, currentY);
+            addText(`${formData.ensinoTecnico ? '☑' : '☐'} Ensino técnico`, margin + 70, currentY);
+            currentY += lineHeight;
+            
+            addText(`${formData.ensinoSecundario ? '☑' : '☐'} Ensino secundário`, margin, currentY);
+            addText(`${formData.ensinoSuperior ? '☑' : '☐'} Ensino superior`, margin + 70, currentY);
+            if (formData.cursoSuperior) addText('Qual: ' + formData.cursoSuperior, margin + 130, currentY);
+            currentY += 15;
+            
+            addText('OUTRAS:', margin, currentY, 12, true);
+            currentY += 10;
+            
+            currentY = addUnderlinedField('Profissão atual: ', formData.profissaoAtual, margin, currentY, 120);
+            currentY = addUnderlinedField('Profissão anterior: ', formData.profissaoAnterior, margin, currentY, 120);
+            currentY = addUnderlinedField('Nome do cônjuge: ', formData.conjuge, margin, currentY, 120);
+            
+            const cmSim = formData.conjugeMaconico === 'Sim';
+            const cmNao = formData.conjugeMaconico === 'Não';
+            addText(`Cônjuge maçon: ${cmSim ? '☑' : '☐'} Sim ${cmNao ? '☑' : '☐'} Não`, margin, currentY);
+            currentY += lineHeight;
+            
+            if (formData.ordemConjuge) {
+                currentY = addUnderlinedField('De qual ordem: ', formData.ordemConjuge, margin, currentY, 100);
+            }
+            
+            const ccSim = formData.conjugeCiente === 'Sim';
+            const ccNao = formData.conjugeCiente === 'Não';
+            addText(`Cônjuge ciente: ${ccSim ? '☑' : '☐'} Sim ${ccNao ? '☑' : '☐'} Não`, margin, currentY);
+            currentY += lineHeight;
+            
+            const tfSim = formData.temFilhos === 'Sim';
+            const tfNao = formData.temFilhos === 'Não';
+            addText(`Tem filhos: ${tfSim ? '☑' : '☐'} Sim ${tfNao ? '☑' : '☐'} Não`, margin, currentY);
+            if (formData.idadesFilhos) addText('Idades: ' + formData.idadesFilhos, margin + 70, currentY);
+            currentY += 10;
+            
+            if (formData.filantropia) {
+                currentY = addUnderlinedField('Obras filantrópicas: ', formData.filantropia, margin, currentY, 120);
+            }
+            
+            currentY += 20;
+            
+            // Aprovação
+            addText('Aprovado em _______________', margin, currentY);
+            addText('VM _______________', margin + 70, currentY);
+            addText('Sec Orad _______________', margin + 140, currentY);
+            
+            if (formData.loja) {
+                currentY += 10;
+                addText('Loja: ' + formData.loja, margin, currentY, 9);
+            }
+            
+            // Salvar PDF
+            const fileName = formData.apelidos ? 
+                `Formulario_FP1A_${formData.apelidos}_${new Date().toISOString().split('T')[0]}.pdf` : 
+                'Formulario_FP1A_Completo.pdf';
+            pdf.save(fileName);
         }
+
 
         // Função para permitir apenas uma seleção nos checkboxes do tipo de pedido
         function selectOnlyOne(selectedId) {
