@@ -922,9 +922,8 @@
             window.print();
         }
 
-        // Função para gerar PDF
+        // Função para gerar PDF com quebras de página corretas
         function generatePDF() {
-            const element = document.querySelector('.container');
             const buttons = document.querySelector('.action-buttons');
             const controls = document.querySelectorAll('.signature-controls');
             
@@ -932,35 +931,80 @@
             buttons.style.display = 'none';
             controls.forEach(control => control.style.display = 'none');
             
-            html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                
-                const imgWidth = 210;
-                const pageHeight = 295;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                let heightLeft = imgHeight;
-                
-                let position = 0;
-                
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-                
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            // Elementos para capturar (em ordem)
+            const sections = [
+                '.header',
+                '.form-title', 
+                '.form-section:nth-of-type(1)', // Tipo de pedido
+                '.form-section:nth-of-type(2)', // Dados pessoais
+                '.form-section:nth-of-type(3)', // Situação maçónica  
+                '.form-section:nth-of-type(4)', // Documentação
+                '.form-section:nth-of-type(5)', // Habilitações
+                '.form-section:nth-of-type(6)', // Informações profissionais
+                '.form-section:nth-of-type(7)', // Declaração + assinatura
+                '.form-section:nth-of-type(8)', // Aprovação
+                '.documents-list'
+            ];
+            
+            let currentY = 0;
+            let pageHeight = 280; // Altura útil da página A4 (deixando margens)
+            let promises = [];
+            
+            // Capturar cada seção separadamente
+            sections.forEach((selector, index) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    const promise = html2canvas(element, {
+                        scale: 1.5,
+                        useCORS: true,
+                        allowTaint: true
+                    }).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgWidth = 190; // Largura com margens
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                        
+                        return { imgData, imgWidth, imgHeight, index };
+                    });
+                    promises.push(promise);
                 }
+            });
+            
+            Promise.all(promises).then(results => {
+                results.sort((a, b) => a.index - b.index);
                 
-                pdf.save('Formulario_FP1A.pdf');
+                results.forEach((result, i) => {
+                    const { imgData, imgWidth, imgHeight } = result;
+                    
+                    // Se não couber na página atual, criar nova página
+                    if (currentY + imgHeight > pageHeight && currentY > 0) {
+                        pdf.addPage();
+                        currentY = 0;
+                    }
+                    
+                    // Adicionar a imagem
+                    pdf.addImage(imgData, 'PNG', 10, currentY + 10, imgWidth, imgHeight);
+                    currentY += imgHeight + 5; // Pequeno espaço entre seções
+                    
+                    // Forçar nova página após certas seções
+                    if (i === 6 || i === 8) { // Após declaração ou aprovação
+                        pdf.addPage();
+                        currentY = 0;
+                    }
+                });
+                
+                pdf.save('Formulario_FP1A_Completo.pdf');
                 
                 // Mostrar elementos novamente
+                buttons.style.display = 'flex';
+                controls.forEach(control => control.style.display = 'flex');
+            }).catch(error => {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF. Tente novamente.');
+                
+                // Mostrar elementos novamente em caso de erro
                 buttons.style.display = 'flex';
                 controls.forEach(control => control.style.display = 'flex');
             });
