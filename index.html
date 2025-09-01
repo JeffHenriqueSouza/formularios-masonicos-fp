@@ -417,141 +417,421 @@
     <script>
         // Função para baixar template do FP1A
         function downloadFP1ATemplate() {
-            // Criar um template Word básico do FP1A
-            const templateContent = `
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Formulário FP 1A - Template</title>
-                    <style>
-                        body { font-family: 'Times New Roman', serif; margin: 40px; line-height: 1.6; }
-                        .header { text-align: center; font-weight: bold; margin-bottom: 30px; }
-                        .section { margin-bottom: 25px; }
-                        .field { margin-bottom: 15px; }
-                        .label { font-weight: bold; display: inline-block; width: 200px; }
-                        .underline { border-bottom: 1px solid black; display: inline-block; min-width: 300px; height: 20px; }
-                        .checkbox { display: inline-block; width: 15px; height: 15px; border: 1px solid black; margin-right: 5px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
-                        <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
-                        <h3>FORMULÁRIO FP 1A - AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE</h3>
-                    </div>
-                    
-                    <div class="section">
-                        <h3>DADOS PESSOAIS</h3>
-                        <div class="field">
-                            <span class="label">Apelido(s):</span>
-                            <span class="underline"></span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Nome(s) próprio(s):</span>
-                            <span class="underline"></span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Estado civil:</span>
-                            <span class="underline"></span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Local e data de nascimento:</span>
-                            <span class="underline"></span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Nacionalidade:</span>
-                            <span class="underline"></span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Morada:</span>
-                            <span class="underline"></span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Localidade:</span>
-                            <span class="underline"></span>
-                            <span class="label">Código postal:</span>
-                            <span class="underline" style="width: 100px;"></span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Telemóvel:</span>
-                            <span class="underline"></span>
-                        </div>
-                        <div class="field">
-                            <span class="label">Email:</span>
-                            <span class="underline"></span>
-                        </div>
-                    </div>
+            // Template Word completo do FP1A com formatação profissional
+            const templateContent = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Formulário FP 1A</title>
+    <style>
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
+            line-height: 1.4;
+            margin: 2.5cm;
+            color: black;
+        }
+        
+        .header {
+            font-size: 14pt;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20pt;
+        }
+        
+        .title {
+            font-size: 13pt;
+            font-weight: bold;
+            text-decoration: underline;
+            text-align: center;
+            margin: 20pt 0;
+        }
+        
+        .logo-box {
+            position: absolute;
+            top: 1cm;
+            left: 1cm;
+            width: 3cm;
+            height: 2.5cm;
+            border: 1pt dashed black;
+            text-align: center;
+            font-size: 8pt;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .field-line {
+            border-bottom: 1pt solid black;
+            display: inline-block;
+            height: 16pt;
+            margin-left: 4pt;
+        }
+        
+        .line-300 { width: 300pt; }
+        .line-250 { width: 250pt; }
+        .line-200 { width: 200pt; }
+        .line-150 { width: 150pt; }
+        .line-400 { width: 400pt; }
+        
+        .checkbox {
+            width: 10pt;
+            height: 10pt;
+            border: 1pt solid black;
+            display: inline-block;
+            margin-right: 4pt;
+            vertical-align: middle;
+        }
+        
+        .form-line {
+            margin-bottom: 14pt;
+        }
+        
+        .two-col {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14pt;
+        }
+        
+        .left { flex: 1; }
+        .right { flex: 1; margin-left: 20pt; }
+        
+        .text-block {
+            margin: 20pt 0;
+            text-align: justify;
+        }
+        
+        .signature-section {
+            text-align: center;
+            margin: 25pt 0;
+        }
+        
+        .signature-line {
+            border-bottom: 1pt solid black;
+            width: 250pt;
+            height: 50pt;
+            margin: 15pt auto;
+        }
+        
+        .multi-line {
+            border-bottom: 1pt solid black;
+            width: 100%;
+            height: 16pt;
+            margin: 3pt 0;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 13pt;
+            margin: 20pt 0 15pt 0;
+        }
+        
+        .approval-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40pt;
+        }
+        
+        .approval-box {
+            text-align: center;
+            width: 150pt;
+        }
+        
+        .approval-line {
+            border-bottom: 1pt solid black;
+            height: 40pt;
+            margin-bottom: 8pt;
+        }
+        
+        .stamp-box {
+            position: absolute;
+            bottom: 4cm;
+            right: 2cm;
+            width: 3cm;
+            height: 2cm;
+            border: 1pt dashed black;
+            text-align: center;
+            font-size: 10pt;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 1.5cm;
+            right: 1.5cm;
+            font-weight: bold;
+            font-size: 10pt;
+        }
+        
+        .options {
+            font-style: italic;
+            color: #666;
+            font-size: 10pt;
+            margin-left: 15pt;
+        }
+    </style>
+</head>
+<body>
 
-                    <div class="section">
-                        <h3>SITUAÇÃO MAÇÓNICA</h3>
-                        <div class="field">
-                            <span class="checkbox"></span>
-                            <span>Sou membro da Federação _________________ do "Le Droit Humain" e desejo afiliar-me à Fed Port</span>
-                        </div>
-                        <div class="field">
-                            <span class="checkbox"></span>
-                            <span>Sou membro da Obediência _________________ e desejo ser integrado no "Le Droit Humain"</span>
-                        </div>
-                        <div class="field">
-                            <span class="checkbox"></span>
-                            <span>Sou demissionário/irradiado do "Le Droit Humain", e desejo ser reintegrado(a) na Fed Port</span>
-                        </div>
-                        <div class="field">
-                            <span class="checkbox"></span>
-                            <span>Sou demissionário/irradiado de _________________ e desejo retomar a minha actividade maçónica</span>
-                        </div>
-                    </div>
+<div class="logo-box">
+    LOGÓTIPO<br>DA LOJA
+</div>
 
-                    <div class="section">
-                        <h3>DOCUMENTAÇÃO</h3>
-                        <div class="field">
-                            <span class="label">Apresenta atestado de quite:</span>
-                            <span class="checkbox"></span>Sim
-                            <span class="checkbox"></span>Não
-                        </div>
-                        <div class="field">
-                            <span class="label">Apresenta passaporte do DH:</span>
-                            <span class="checkbox"></span>Sim
-                            <span class="checkbox"></span>Não
-                        </div>
-                    </div>
+<div class="header">
+    ORDEM MAÇÓNICA MISTA INTERNACIONAL «LE DROIT HUMAIN»<br>
+    FEDERAÇÃO PORTUGUESA
+</div>
 
-                    <div class="section">
-                        <h3>HABILITAÇÕES</h3>
-                        <div class="field">
-                            <span class="checkbox"></span>Ensino básico
-                            <span class="checkbox"></span>Ensino secundário
-                            <span class="checkbox"></span>Ensino técnico
-                            <span class="checkbox"></span>Ensino superior
-                        </div>
-                    </div>
+<div class="title">
+    AFILIAÇÃO ◊ REINTEGRAÇÃO ◊ RETOMA DE ACTIVIDADE
+</div>
 
-                    <div class="section">
-                        <h3>DECLARAÇÃO</h3>
-                        <p>Declaro ter tomado conhecimento da Declaração de Princípios da Ordem Maçónica Mista Internacional "LE DROIT HUMAIN", "O DIREITO HUMANO", comprometendo-me a cumprir os deveres morais e a suportar os encargos materiais resultantes da minha entrada.</p>
-                        
-                        <div class="field">
-                            <span class="label">Data:</span>
-                            <span class="underline"></span>
-                        </div>
-                        
-                        <div style="margin-top: 40px; text-align: center;">
-                            <div>Assinatura do Irmão/Irmã</div>
-                            <div style="border-bottom: 1px solid black; width: 300px; height: 60px; margin: 20px auto;"></div>
-                        </div>
-                    </div>
+<div class="form-line">
+    <strong>Apelido(s):</strong>
+    <span class="field-line line-400"></span>
+</div>
 
-                    <div class="section">
-                        <h3>DOCUMENTOS A ENTREGAR EM ANEXO:</h3>
-                        <ul>
-                            <li>Três fotografias tipo passe</li>
-                            <li>Uma certidão de registo criminal</li>
-                            <li>Uma certidão de nascimento narrativa completa</li>
-                        </ul>
-                    </div>
-                </body>
-                </html>
-            `;
+<div class="form-line">
+    <strong>Nome(s) próprio(s):</strong>
+    <span class="field-line line-400"></span>
+</div>
+
+<div class="form-line">
+    <strong>Estado civil:</strong>
+    <span class="field-line line-250"></span>
+    <div class="options">[Opções: Solteiro(a), Casado(a), Divorciado(a), Viúvo(a), União de facto]</div>
+</div>
+
+<div class="form-line">
+    <strong>Local e data de nascimento:</strong>
+    <span class="field-line line-300"></span>
+</div>
+
+<div class="form-line">
+    <strong>Nacionalidade:</strong>
+    <span class="field-line line-250"></span>
+</div>
+
+<div class="form-line">
+    <strong>Morada:</strong>
+    <span class="field-line line-400"></span>
+</div>
+
+<div class="two-col">
+    <div class="left">
+        <strong>Localidade:</strong>
+        <span class="field-line line-200"></span>
+    </div>
+    <div class="right">
+        <strong>Código postal:</strong>
+        <span class="field-line line-150"></span>
+    </div>
+</div>
+
+<div class="two-col">
+    <div class="left">
+        <strong>Telemóvel:</strong>
+        <span class="field-line line-150"></span>
+    </div>
+    <div class="right">
+        <strong>Email:</strong>
+        <span class="field-line line-250"></span>
+    </div>
+</div>
+
+<div class="two-col">
+    <div class="left">
+        <strong>Telefone casa:</strong>
+        <span class="field-line line-150"></span>
+    </div>
+    <div class="right">
+        <strong>Telefone do trabalho:</strong>
+        <span class="field-line line-150"></span>
+    </div>
+</div>
+
+<div style="margin: 20pt 0;">
+    <div class="form-line">
+        <span class="checkbox"></span>
+        Sou membro da Federação 
+        <span class="field-line line-200"></span>
+        do "Le Droit Humain e desejo<br>
+        <span style="margin-left: 15pt;">afiliar-me à Fed Port</span>
+        <div class="options">[Opções: Francesa, Belga, Suíça, Brasileira, Italiana, Espanhola, Outra]</div>
+    </div>
+
+    <div class="form-line">
+        <span class="checkbox"></span>
+        Sou membro da Obediência 
+        <span class="field-line line-250"></span>
+        e desejo ser<br>
+        <span style="margin-left: 15pt;">integrado no "Le Droit Humain"</span>
+    </div>
+
+    <div class="form-line">
+        <span class="checkbox"></span>
+        Sou demissionário/irradiado do "Le Droit Humain", e desejo ser reintegrado(a) na Fed Port
+    </div>
+
+    <div class="form-line">
+        <span class="checkbox"></span>
+        Sou demissionário/irradiado de 
+        <span class="field-line line-300"></span>,<br>
+        <span style="margin-left: 15pt;">e desejo retomar a minha actividade maçónica</span>
+    </div>
+</div>
+
+<div class="form-line">
+    <strong>Apresenta atestado de quite:</strong>
+    <span class="checkbox"></span> Sim
+    <span class="checkbox"></span> Não
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <strong>Apresenta passaporte do DH:</strong>
+    <span class="checkbox"></span> Sim
+    <span class="checkbox"></span> Não
+</div>
+
+<div class="form-line">
+    <strong>Se não, deve justificar:</strong>
+</div>
+<div class="multi-line"></div>
+<div class="multi-line"></div>
+
+<div class="text-block">
+    Declaro ter tomado conhecimento da Declaração de Princípios da Ordem Maçónica Mista Internacional "LE DROIT
+    HUMAIN", "O DIREITO HUMANO", comprometendo-me a cumprir os deveres morais e a suportar os encargos materiais resultantes da
+    minha entrada.
+</div>
+
+<div class="form-line">
+    <strong>Data:</strong>
+    <span class="field-line line-150"></span>
+</div>
+
+<div class="signature-section">
+    <div style="font-weight: bold;">Assinatura do Irmão/Irmã</div>
+    <div class="signature-line"></div>
+</div>
+
+<div style="font-size: 11pt;">
+    <strong>A entregar em anexo:</strong><br>
+    • Três fotografias tipo passe;<br>
+    • Uma certidão de registo criminal;<br>
+    • Uma certidão de nascimento narrativa completa.
+</div>
+
+<!-- PÁGINA 2 -->
+<div class="page-break">
+    <div class="section-title">HABILITAÇÕES:</div>
+
+    <div style="margin: 15pt 0;">
+        <div class="two-col">
+            <div class="left">
+                <span class="checkbox"></span> Ensino básico
+            </div>
+            <div class="right">
+                <span class="checkbox"></span> Ensino técnico
+            </div>
+        </div>
+        <div class="two-col">
+            <div class="left">
+                <span class="checkbox"></span> Ensino secundário
+            </div>
+            <div class="right">
+                <span class="checkbox"></span> Ensino superior
+                &nbsp;&nbsp;<strong>Qual:</strong>
+                <span class="field-line line-150"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">OUTRAS:</div>
+
+    <div class="form-line">
+        <strong>Que profissão(ões) exerce, e onde?</strong>
+    </div>
+    <div class="multi-line"></div>
+    <div class="multi-line"></div>
+    <div class="multi-line"></div>
+
+    <div class="form-line">
+        <strong>Que profissão(ões) já exerceu, e onde?</strong>
+    </div>
+    <div class="multi-line"></div>
+    <div class="multi-line"></div>
+    <div class="multi-line"></div>
+
+    <div class="form-line">
+        <strong>Apelido e nome do cônjuge:</strong>
+        <span class="field-line line-300"></span>
+    </div>
+
+    <div class="form-line">
+        <strong>O conjugue faz parte de uma Ordem maçónica?</strong>
+        <span class="checkbox"></span> Sim
+        <span class="checkbox"></span> Não
+    </div>
+
+    <div class="form-line">
+        <strong>Em caso afirmativo, de qual?</strong>
+        <span class="field-line line-250"></span>
+    </div>
+
+    <div class="form-line">
+        <strong>Ele/ela está ao corrente do seu pedido?</strong>
+        <span class="checkbox"></span> Sim
+        <span class="checkbox"></span> Não
+    </div>
+
+    <div class="form-line">
+        <strong>Tem filhos?</strong>
+        <span class="checkbox"></span> Sim
+        <span class="checkbox"></span> Não
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <strong>Idades:</strong>
+        <span class="field-line line-150"></span>
+    </div>
+
+    <div class="form-line">
+        <strong>Dedica-se a obras filantrópicas? Quais?</strong>
+    </div>
+    <div class="multi-line"></div>
+    <div class="multi-line"></div>
+
+    <div class="approval-section">
+        <div class="approval-box">
+            <div class="approval-line"></div>
+            <strong>Aprovado em</strong>
+        </div>
+        <div class="approval-box">
+            <div class="approval-line"></div>
+            <strong>VM</strong>
+        </div>
+        <div class="approval-box">
+            <div class="approval-line"></div>
+            <strong>Sec Orad</strong>
+        </div>
+    </div>
+</div>
+
+<div class="stamp-box">
+    Carimbo<br>da Loja
+</div>
+
+<div class="footer">
+    Formulário Nº 1A da FP
+</div>
+
+</body>
+</html>`;
 
             const blob = new Blob([templateContent], {
                 type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
