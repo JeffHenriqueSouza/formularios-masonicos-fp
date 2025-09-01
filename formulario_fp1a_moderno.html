@@ -987,13 +987,34 @@
                 pdf.text(text, x, y);
             }
             
-            // Função para adicionar linha sublinhada
+            // Função para adicionar linha sublinhada com texto posicionado corretamente
             function addUnderlinedField(label, value, x, y, width = 100) {
                 addText(label, x, y, 10, true);
                 const labelWidth = pdf.getTextWidth(label);
                 pdf.line(x + labelWidth + 2, y + 1, x + labelWidth + width, y + 1);
+                
                 if (value) {
-                    addText(value, x + labelWidth + 5, y);
+                    // Posicionar texto ligeiramente acima da linha para não ficar cortado
+                    const textY = y - 1; // Mover texto 1mm para cima
+                    const maxWidth = width - 10;
+                    const lines = pdf.splitTextToSize(value, maxWidth);
+                    
+                    if (lines.length === 1) {
+                        // Texto curto - uma linha
+                        addText(value, x + labelWidth + 5, textY);
+                        return y + lineHeight;
+                    } else {
+                        // Texto longo - múltiplas linhas
+                        addText(lines[0], x + labelWidth + 5, textY);
+                        let currentLineY = y + lineHeight;
+                        
+                        for (let i = 1; i < lines.length; i++) {
+                            pdf.line(x, currentLineY + 1, x + labelWidth + width, currentLineY + 1);
+                            addText(lines[i], x + 5, currentLineY - 1);
+                            currentLineY += lineHeight;
+                        }
+                        return currentLineY;
+                    }
                 }
                 return y + lineHeight;
             }
@@ -1016,33 +1037,39 @@
             currentY = addUnderlinedField('Nacionalidade: ', formData.nacionalidade, margin, currentY, 80);
             currentY = addUnderlinedField('Morada: ', formData.morada, margin, currentY, 120);
             
-            // Localidade e código postal na mesma linha
+            // Localidade e código postal - ajustado para campos menores
             addText('Localidade: ', margin, currentY, 10, true);
-            pdf.line(margin + 25, currentY + 1, margin + 80, currentY + 1);
-            if (formData.localidade) addText(formData.localidade, margin + 28, currentY);
+            pdf.line(margin + 25, currentY + 1, margin + 75, currentY + 1);
+            if (formData.localidade) {
+                const localidadeText = pdf.splitTextToSize(formData.localidade, 45);
+                addText(localidadeText[0], margin + 28, currentY - 1);
+            }
             
-            addText('Código postal: ', margin + 90, currentY, 10, true);
-            pdf.line(margin + 125, currentY + 1, margin + 160, currentY + 1);
-            if (formData.codigoPostal) addText(formData.codigoPostal, margin + 128, currentY);
+            addText('Código postal: ', margin + 85, currentY, 10, true);
+            pdf.line(margin + 120, currentY + 1, margin + 155, currentY + 1);
+            if (formData.codigoPostal) addText(formData.codigoPostal, margin + 123, currentY - 1);
             currentY += lineHeight;
             
-            // Contactos
+            // Contactos - ajustados para melhor espaçamento e posicionamento
             addText('Telemóvel: ', margin, currentY, 10, true);
-            pdf.line(margin + 23, currentY + 1, margin + 70, currentY + 1);
-            if (formData.telemovel) addText(formData.telemovel, margin + 26, currentY);
+            pdf.line(margin + 23, currentY + 1, margin + 65, currentY + 1);
+            if (formData.telemovel) addText(formData.telemovel, margin + 26, currentY - 1);
             
-            addText('Email: ', margin + 80, currentY, 10, true);
-            pdf.line(margin + 95, currentY + 1, margin + 170, currentY + 1);
-            if (formData.email) addText(formData.email, margin + 98, currentY);
+            addText('Email: ', margin + 75, currentY, 10, true);
+            pdf.line(margin + 88, currentY + 1, margin + 170, currentY + 1);
+            if (formData.email) {
+                const emailText = pdf.splitTextToSize(formData.email, 75);
+                addText(emailText[0], margin + 91, currentY - 1);
+            }
             currentY += lineHeight;
             
             addText('Telefone casa: ', margin, currentY, 10, true);
-            pdf.line(margin + 30, currentY + 1, margin + 75, currentY + 1);
-            if (formData.telefone) addText(formData.telefone, margin + 33, currentY);
+            pdf.line(margin + 30, currentY + 1, margin + 70, currentY + 1);
+            if (formData.telefone) addText(formData.telefone, margin + 33, currentY - 1);
             
-            addText('Telefone trabalho: ', margin + 85, currentY, 10, true);
-            pdf.line(margin + 125, currentY + 1, margin + 170, currentY + 1);
-            if (formData.telefoneTrabalho) addText(formData.telefoneTrabalho, margin + 128, currentY);
+            addText('Telefone trabalho: ', margin + 80, currentY, 10, true);
+            pdf.line(margin + 120, currentY + 1, margin + 170, currentY + 1);
+            if (formData.telefoneTrabalho) addText(formData.telefoneTrabalho, margin + 123, currentY - 1);
             currentY += 15;
             
             // Situação maçónica
