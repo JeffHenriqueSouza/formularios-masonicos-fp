@@ -66,6 +66,15 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 - Modo alternável entre Pedido e Declaração
 - Export para Word e PDF
 
+### 9. **Formulário FP 12** - Fornecimentos
+- Encomenda de materiais e fornecimentos maçónicos oficiais
+- Lista de 11 itens predefinidos com preços atualizados
+- Campos personalizáveis para outros itens necessários
+- Cálculo automático de totais e subtotais
+- Informação sobre preços (Constituição €2,00, Medalha Adelaide Cabete €16,00, etc.)
+- Assinaturas duplas (V∴M∴ e Secretário Orador)
+- Export para Word e PDF
+
 ## 🌟 Características
 
 - ✅ **Design Moderno**: Interface profissional e responsiva
@@ -127,6 +136,7 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 ├── formulario_fp10.html          # Formulário FP 10
 ├── formulario_fp11.html          # Formulário FP 11
 ├── formulario_fp11b.html         # Formulário FP 11B
+├── formulario_fp12.html          # Formulário FP 12
 └── README.md                     # Este arquivo
 ```
 
@@ -211,6 +221,13 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
   - **📋 "DECLARAÇÃO"**: Para responder a uma solicitação
 - **Preencha conforme o modo selecionado**
 - **Assinaturas duplas:** Presidente do Atelier e Secretário Orador
+
+#### **🔹 FP 12 - Fornecimentos**
+- **📦 Itens predefinidos:** Constituição (€2,00), Regulamentos (€1,50), Mementos (€1,00 cada)
+- **🏅 Medalha especial:** Medalha de Adelaide Cabete (€16,00)
+- **➕ Itens personalizados:** Adicione outros materiais necessários
+- **💰 Cálculo automático:** Sistema calcula totais e subtotais automaticamente
+- **Assinaturas duplas:** V∴M∴ e Secretário Orador
 
 ### ✍️ **Passo 4: Assinatura Digital**
 1. **Localize a seção** "Assinatura Digital"
