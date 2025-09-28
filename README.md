@@ -31,6 +31,14 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 - Assinaturas duplas (V∴M∴ e Secretário Orador)
 - Export para Word e PDF
 
+### 5. **Formulário FP 09** - Pedido de Diploma de MM
+- Solicitação de diploma de Mestre Maçom (MM)
+- Dados completos do candidato e histórico maçónico
+- Seleção de graus maçónicos (3º ao 33º)
+- Informação sobre custos (€15,00 por diploma)
+- Assinaturas duplas (V∴M∴ e Secretário Orador)
+- Export para Word e PDF
+
 ## 🌟 Características
 
 - ✅ **Design Moderno**: Interface profissional e responsiva
@@ -88,19 +96,21 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 ├── formulario_fp04.html          # Formulário FP 04
 ├── formulario_fp05.html          # Formulário FP 05
 ├── formulario_fp06.html          # Formulário FP 06
+├── formulario_fp09.html          # Formulário FP 09
 └── README.md                     # Este arquivo
 ```
 
 ## 🎯 Como Usar
 
 1. **Acesse a página inicial** (`index.html`)
-2. **Escolha o formulário** desejado (FP 1A, FP 04, FP 05 ou FP 06)
+2. **Escolha o formulário** desejado (FP 1A, FP 04, FP 05, FP 06 ou FP 09)
 3. **Preencha os campos** obrigatórios
 4. **Faça upload do logótipo** da loja (opcional)
 5. **Para o FP 04**: Adicione também a fotografia do candidato
 6. **Para o FP 06**: Adicione deputados e suplentes dinamicamente
-7. **Assine digitalmente** quando necessário
-8. **Exporte para Word/PDF** sem senhas ou restrições
+7. **Para o FP 09**: Selecione o grau maçónico atual do candidato
+8. **Assine digitalmente** quando necessário
+9. **Exporte para Word/PDF** sem senhas ou restrições
 
 ## 📱 Compatibilidade
 

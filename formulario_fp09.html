@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário FP 09 - Pedido de Diploma de MM - Ordem Maçónica</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-upload {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100px;
+            height: 80px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo-upload:hover {
+            border-color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .logo-upload input {
+            display: none;
+        }
+
+        .logo-upload img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 5px;
+        }
+
+        .logo-placeholder {
+            font-size: 10px;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header h2 {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .form-title {
+            background: #16a085;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-group.full-width {
+            flex: 1 1 100%;
+        }
+
+        .form-group.half-width {
+            flex: 1 1 calc(50% - 10px);
+        }
+
+        .form-group.third-width {
+            flex: 1 1 calc(33.333% - 14px);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #16a085;
+            box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .loja-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .loja-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .candidate-section {
+            background: #e8f8f5;
+            border: 2px solid #a7f3d0;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .candidate-section h3 {
+            color: #16a085;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .signature-section {
+            margin-top: 30px;
+            padding: 25px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+        }
+
+        .signatures-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .signature-box {
+            text-align: center;
+        }
+
+        .signature-pad {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .signature-controls {
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: #16a085;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #138d75;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .form-actions {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+            text-align: center;
+        }
+
+        .error {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b6d7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .info-box h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #0c5460;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .cost-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .cost-warning h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .cost-warning .cost-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #d63031;
+        }
+
+        .mason-info {
+            background: #f8f9fa;
+            border-left: 4px solid #16a085;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .mason-info h5 {
+            color: #16a085;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-group.half-width,
+            .form-group.third-width {
+                flex: 1 1 100%;
+            }
+            
+            .form-content {
+                padding: 20px;
+            }
+
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+
+            .signatures-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .form-actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-upload" onclick="document.getElementById('logoUpload').click()">
+                <input type="file" id="logoUpload" accept="image/*">
+                <div class="logo-placeholder" id="logoPlaceholder">
+                    LOGÓTIPO<br>DA LOJA
+                </div>
+            </div>
+            
+            <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
+            <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
+        </div>
+
+        <div class="form-title">
+            FORMULÁRIO FP 09 - PEDIDO DE DIPLOMA DE MM
+        </div>
+
+        <div class="form-content">
+            <form id="fp09Form">
+                <!-- Informações da Loja -->
+                <div class="loja-section">
+                    <h3>INFORMAÇÕES DA LOJA</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lojaSelect">Respeitável Loja <span class="required">*</span></label>
+                            <select id="lojaSelect" name="loja" required>
+                                <option value="">Selecione a Loja</option>
+                                <option value="acacia-1">R∴L∴ Acácia Nº 1</option>
+                                <option value="liberdade-2">R∴L∴ Liberdade Nº 2</option>
+                                <option value="fraternidade-3">R∴L∴ Fraternidade Nº 3</option>
+                                <option value="igualdade-4">R∴L∴ Igualdade Nº 4</option>
+                                <option value="harmonia-5">R∴L∴ Harmonia Nº 5</option>
+                                <option value="outra">Outra</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="outraLoja">Especificar Outra Loja</label>
+                            <input type="text" id="outraLoja" name="outraLoja" placeholder="Nome e número da loja">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações do Pedido -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="oriente">Oriente <span class="required">*</span></label>
+                        <input type="text" id="oriente" name="oriente" required placeholder="Cidade/Local">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataPedido">Data do Pedido <span class="required">*</span></label>
+                        <input type="date" id="dataPedido" name="dataPedido" required>
+                    </div>
+                </div>
+
+                <!-- Dados do Candidato ao Diploma -->
+                <div class="candidate-section">
+                    <h3>🎓 DADOS DO CANDIDATO AO DIPLOMA</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="nomeCandidato">Nome Completo do Ir∴/I∴ <span class="required">*</span></label>
+                            <input type="text" id="nomeCandidato" name="nomeCandidato" required>
+                        </div>
+                    </div>
+
+                    <div class="mason-info">
+                        <h5>📅 Informações Maçónicas</h5>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dataMM">Data quando se tornou MM <span class="required">*</span></label>
+                                <input type="date" id="dataMM" name="dataMM" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grauAtual">Grau Atual</label>
+                                <select id="grauAtual" name="grauAtual">
+                                    <option value="">Selecione</option>
+                                    <option value="3">3º - Mestre Maçom (MM)</option>
+                                    <option value="4">4º - Mestre Secreto</option>
+                                    <option value="18">18º - Cavaleiro Rosa-Cruz</option>
+                                    <option value="30">30º - Cavaleiro Kadosh</option>
+                                    <option value="33">33º - Soberano Grande Inspetor Geral</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="outroGrau">Especificar Outro Grau</label>
+                                <input type="text" id="outroGrau" name="outroGrau" placeholder="Ex: 5º - Mestre Perfeito">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dataNascimento">Data de Nascimento <span class="required">*</span></label>
+                            <input type="date" id="dataNascimento" name="dataNascimento" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="localNascimento">Local de Nascimento <span class="required">*</span></label>
+                            <input type="text" id="localNascimento" name="localNascimento" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações Adicionais -->
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="observacoes">Observações</label>
+                        <textarea id="observacoes" name="observacoes" placeholder="Notas adicionais sobre o pedido (opcional)"></textarea>
+                    </div>
+                </div>
+
+                <!-- Informação sobre Regulamento -->
+                <div class="info-box">
+                    <h4>📋 INFORMAÇÃO REGULAMENTAR</h4>
+                    <p><strong>Consulte os Artigos 24º, 26º e 27º do Regulamento da Federação</strong></p>
+                    <p>Este pedido deve ser devidamente fundamentado e seguir os procedimentos estabelecidos no regulamento.</p>
+                </div>
+
+                <!-- Aviso de Custo -->
+                <div class="cost-warning">
+                    <h4>💰 INFORMAÇÃO SOBRE CUSTOS</h4>
+                    <p>Será debitado na facturação anual desta R∴L∴ o valor de:</p>
+                    <div class="cost-amount">€ 15,00</div>
+                    <p>por cada diploma emitido.</p>
+                </div>
+
+                <!-- Assinaturas -->
+                <div class="signature-section">
+                    <h4 style="text-align: center; margin-bottom: 20px;">Assinaturas <span class="required">*</span></h4>
+                    <div class="signatures-container">
+                        <div class="signature-box">
+                            <h5>Venerável Mestre</h5>
+                            <canvas id="signaturePadVM" class="signature-pad" width="300" height="120"></canvas>
+                            <div class="signature-controls">
+                                <button type="button" id="clearSignatureVM" class="btn btn-secondary btn-sm">🗑️ Limpar</button>
+                            </div>
+                            <div id="signatureErrorVM" class="error-message" style="display: none;">
+                                Assinatura do V∴M∴ obrigatória.
+                            </div>
+                        </div>
+                        <div class="signature-box">
+                            <h5>Secretário Orador</h5>
+                            <canvas id="signaturePadSO" class="signature-pad" width="300" height="120"></canvas>
+                            <div class="signature-controls">
+                                <button type="button" id="clearSignatureSO" class="btn btn-secondary btn-sm">🗑️ Limpar</button>
+                            </div>
+                            <div id="signatureErrorSO" class="error-message" style="display: none;">
+                                Assinatura do Sec∴ Orad∴ obrigatória.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações do Formulário -->
+                <div class="form-actions">
+                    <button type="button" id="exportToPDF" class="btn btn-primary">
+                        📄 Exportar para PDF
+                    </button>
+                    <button type="button" id="exportToWord" class="btn btn-success">
+                        📝 Exportar para Word
+                    </button>
+                    <button type="button" id="printForm" class="btn btn-secondary">
+                        🖨️ Imprimir
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Inicialização
+        let signaturePadVM, signaturePadSO;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSignaturePads();
+            setupEventListeners();
+            setCurrentDate();
+        });
+
+        // Configurar Signature Pads
+        function initializeSignaturePads() {
+            const canvasVM = document.getElementById('signaturePadVM');
+            const canvasSO = document.getElementById('signaturePadSO');
+            
+            signaturePadVM = new SignaturePad(canvasVM, {
+                backgroundColor: '#fff',
+                penColor: '#000'
+            });
+            
+            signaturePadSO = new SignaturePad(canvasSO, {
+                backgroundColor: '#fff',
+                penColor: '#000'
+            });
+            
+            resizeCanvases();
+            window.addEventListener('resize', resizeCanvases);
+        }
+
+        function resizeCanvases() {
+            const canvases = document.querySelectorAll('.signature-pad');
+            canvases.forEach(canvas => {
+                const container = canvas.parentElement;
+                const containerWidth = container.offsetWidth - 40;
+                
+                canvas.width = Math.min(containerWidth, 300);
+                canvas.height = 120;
+            });
+            
+            if (signaturePadVM) signaturePadVM.clear();
+            if (signaturePadSO) signaturePadSO.clear();
+        }
+
+        // Configurar Event Listeners
+        function setupEventListeners() {
+            // Logo upload
+            document.getElementById('logoUpload').addEventListener('change', handleLogoUpload);
+            
+            // Signature controls
+            document.getElementById('clearSignatureVM').addEventListener('click', function() {
+                signaturePadVM.clear();
+                document.getElementById('signatureErrorVM').style.display = 'none';
+            });
+
+            document.getElementById('clearSignatureSO').addEventListener('click', function() {
+                signaturePadSO.clear();
+                document.getElementById('signatureErrorSO').style.display = 'none';
+            });
+
+            // Form controls
+            document.getElementById('exportToPDF').addEventListener('click', exportToPDF);
+            document.getElementById('exportToWord').addEventListener('click', exportToWord);
+            document.getElementById('printForm').addEventListener('click', printForm);
+
+            // Loja selection
+            document.getElementById('lojaSelect').addEventListener('change', function() {
+                const outraLojaField = document.getElementById('outraLoja');
+                outraLojaField.style.display = this.value === 'outra' ? 'block' : 'none';
+                if (this.value !== 'outra') {
+                    outraLojaField.value = '';
+                }
+            });
+
+            // Grau selection
+            document.getElementById('grauAtual').addEventListener('change', function() {
+                const outroGrauField = document.getElementById('outroGrau');
+                outroGrauField.style.display = this.value === 'outro' ? 'block' : 'none';
+                if (this.value !== 'outro') {
+                    outroGrauField.value = '';
+                }
+            });
+        }
+
+        // Definir data atual
+        function setCurrentDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dataPedido').value = today;
+        }
+
+        // Upload de logo
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('O arquivo é muito grande. O tamanho máximo é 2MB.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const placeholder = document.getElementById('logoPlaceholder');
+                    placeholder.innerHTML = `<img src="${e.target.result}" alt="Logo da Loja" style="max-width: 100%; max-height: 100%; border-radius: 5px;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Validação do formulário
+        function validateForm() {
+            const requiredFields = [
+                'lojaSelect', 'oriente', 'dataPedido', 'nomeCandidato', 
+                'dataMM', 'dataNascimento', 'localNascimento'
+            ];
+
+            let isValid = true;
+
+            // Verificar campos obrigatórios
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.classList.add('error');
+                    isValid = false;
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+
+            // Verificar outra loja se selecionada
+            const lojaSelect = document.getElementById('lojaSelect');
+            const outraLoja = document.getElementById('outraLoja');
+            if (lojaSelect.value === 'outra' && !outraLoja.value.trim()) {
+                outraLoja.classList.add('error');
+                isValid = false;
+            } else {
+                outraLoja.classList.remove('error');
+            }
+
+            // Verificar outro grau se selecionado
+            const grauSelect = document.getElementById('grauAtual');
+            const outroGrau = document.getElementById('outroGrau');
+            if (grauSelect.value === 'outro' && !outroGrau.value.trim()) {
+                outroGrau.classList.add('error');
+                isValid = false;
+            } else {
+                outroGrau.classList.remove('error');
+            }
+
+            // Verificar assinaturas
+            if (signaturePadVM.isEmpty()) {
+                document.getElementById('signatureErrorVM').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('signatureErrorVM').style.display = 'none';
+            }
+
+            if (signaturePadSO.isEmpty()) {
+                document.getElementById('signatureErrorSO').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('signatureErrorSO').style.display = 'none';
+            }
+
+            return isValid;
+        }
+
+        // Obter nome da loja
+        function getLojaName() {
+            const lojaSelect = document.getElementById('lojaSelect');
+            const outraLoja = document.getElementById('outraLoja');
+            
+            if (lojaSelect.value === 'outra') {
+                return outraLoja.value;
+            }
+            
+            const selectedOption = lojaSelect.options[lojaSelect.selectedIndex];
+            return selectedOption ? selectedOption.text : '';
+        }
+
+        // Obter grau atual
+        function getGrauAtual() {
+            const grauSelect = document.getElementById('grauAtual');
+            const outroGrau = document.getElementById('outroGrau');
+            
+            if (grauSelect.value === 'outro') {
+                return outroGrau.value;
+            }
+            
+            const selectedOption = grauSelect.options[grauSelect.selectedIndex];
+            return selectedOption ? selectedOption.text : '';
+        }
+
+        // Exportar para PDF
+        async function exportToPDF() {
+            if (!validateForm()) {
+                alert('Por favor, preencha todos os campos obrigatórios e assine o formulário.');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                // Configurações
+                const margin = 20;
+                let yPos = margin;
+                const lineHeight = 7;
+                const pageHeight = pdf.internal.pageSize.height;
+
+                // Cabeçalho
+                pdf.setFontSize(16);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('ORDEM MAÇÓNICA MISTA INTERNACIONAL', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight;
+                pdf.text('«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight * 2;
+
+                pdf.setFontSize(14);
+                pdf.text('FORMULÁRIO FP 09 - PEDIDO DE DIPLOMA DE MM', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight * 2;
+
+                // Dados do formulário
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'normal');
+
+                const formData = {
+                    'R∴L∴:': getLojaName(),
+                    'Oriente:': document.getElementById('oriente').value,
+                    'Data do Pedido:': formatDate(document.getElementById('dataPedido').value),
+                    'Nome do Candidato:': document.getElementById('nomeCandidato').value,
+                    'MM em:': formatDate(document.getElementById('dataMM').value),
+                    'Grau Atual:': getGrauAtual(),
+                    'Data de Nascimento:': formatDate(document.getElementById('dataNascimento').value),
+                    'Local de Nascimento:': document.getElementById('localNascimento').value
+                };
+
+                Object.entries(formData).forEach(([label, value]) => {
+                    if (yPos > pageHeight - 30) {
+                        pdf.addPage();
+                        yPos = margin;
+                    }
+                    
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(label, margin, yPos);
+                    pdf.setFont(undefined, 'normal');
+                    pdf.text(value || '', margin + 50, yPos);
+                    yPos += lineHeight;
+                });
+
+                // Observações
+                const observacoes = document.getElementById('observacoes').value;
+                if (observacoes) {
+                    yPos += lineHeight;
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('Observações:', margin, yPos);
+                    yPos += lineHeight;
+                    pdf.setFont(undefined, 'normal');
+                    const splitObservacoes = pdf.splitTextToSize(observacoes, pdf.internal.pageSize.width - 2 * margin);
+                    pdf.text(splitObservacoes, margin, yPos);
+                    yPos += splitObservacoes.length * lineHeight;
+                }
+
+                // Informação sobre custo
+                if (yPos > pageHeight - 50) {
+                    pdf.addPage();
+                    yPos = margin;
+                }
+                
+                yPos += lineHeight * 2;
+                pdf.setFont(undefined, 'bold');
+                pdf.text('INFORMAÇÃO SOBRE CUSTOS:', margin, yPos);
+                yPos += lineHeight;
+                pdf.setFont(undefined, 'normal');
+                pdf.text('Será debitado na facturação anual desta R∴L∴ o valor de € 15,00', margin, yPos);
+                yPos += lineHeight;
+                pdf.text('por cada diploma emitido.', margin, yPos);
+
+                // Assinaturas
+                if (yPos > pageHeight - 80) {
+                    pdf.addPage();
+                    yPos = margin;
+                }
+                
+                yPos += lineHeight * 2;
+                
+                pdf.setFont(undefined, 'bold');
+                pdf.text('V∴M∴:', margin, yPos);
+                pdf.text('Sec∴ Orad∴:', pdf.internal.pageSize.width / 2 + margin, yPos);
+                yPos += lineHeight;
+                
+                if (!signaturePadVM.isEmpty()) {
+                    const signatureVMDataURL = signaturePadVM.toDataURL();
+                    pdf.addImage(signatureVMDataURL, 'PNG', margin, yPos, 60, 25);
+                }
+                
+                if (!signaturePadSO.isEmpty()) {
+                    const signatureSODataURL = signaturePadSO.toDataURL();
+                    pdf.addImage(signatureSODataURL, 'PNG', pdf.internal.pageSize.width / 2 + margin, yPos, 60, 25);
+                }
+
+                // Rodapé
+                pdf.setFontSize(10);
+                pdf.text('Formulário Nº 09 da FP', pdf.internal.pageSize.width - margin, pageHeight - 10, { align: 'right' });
+
+                // Salvar PDF
+                const fileName = `FP09_Pedido_Diploma_MM_${document.getElementById('nomeCandidato').value.replace(/\s+/g, '_')}.pdf`;
+                pdf.save(fileName);
+
+                showSuccess('PDF gerado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF. Tente novamente.');
+            }
+        }
+
+        // Exportar para Word
+        async function exportToWord() {
+            if (!validateForm()) {
+                alert('Por favor, preencha todos os campos obrigatórios e assine o formulário.');
+                return;
+            }
+
+            try {
+                const docx = window.docx;
+                const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
+
+                const doc = new Document({
+                    sections: [{
+                        properties: {},
+                        children: [
+                            // Cabeçalho
+                            new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({
+                                        text: "ORDEM MAÇÓNICA MISTA INTERNACIONAL",
+                                        bold: true,
+                                        size: 32
+                                    })
+                                ]
+                            }),
+                            new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({
+                                        text: "«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA",
+                                        bold: true,
+                                        size: 24
+                                    })
+                                ]
+                            }),
+                            new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                spacing: { after: 400 },
+                                children: [
+                                    new TextRun({
+                                        text: "FORMULÁRIO FP 09 - PEDIDO DE DIPLOMA DE MM",
+                                        bold: true,
+                                        size: 28
+                                    })
+                                ]
+                            }),
+
+                            // Dados do formulário
+                            ...createFormFields([
+                                ['R∴L∴:', getLojaName()],
+                                ['Oriente:', document.getElementById('oriente').value],
+                                ['Data do Pedido:', formatDate(document.getElementById('dataPedido').value)],
+                                ['Nome do Candidato:', document.getElementById('nomeCandidato').value],
+                                ['MM em:', formatDate(document.getElementById('dataMM').value)],
+                                ['Grau Atual:', getGrauAtual()],
+                                ['Data de Nascimento:', formatDate(document.getElementById('dataNascimento').value)],
+                                ['Local de Nascimento:', document.getElementById('localNascimento').value]
+                            ]),
+
+                            // Observações
+                            ...(document.getElementById('observacoes').value ? [
+                                new Paragraph({
+                                    spacing: { before: 400, after: 200 },
+                                    children: [
+                                        new TextRun({
+                                            text: "Observações:",
+                                            bold: true,
+                                            size: 24
+                                        })
+                                    ]
+                                }),
+                                new Paragraph({
+                                    spacing: { after: 400 },
+                                    children: [
+                                        new TextRun({
+                                            text: document.getElementById('observacoes').value,
+                                            size: 22
+                                        })
+                                    ]
+                                })
+                            ] : []),
+
+                            // Informação sobre custos
+                            new Paragraph({
+                                spacing: { before: 400, after: 200 },
+                                children: [
+                                    new TextRun({
+                                        text: "INFORMAÇÃO SOBRE CUSTOS:",
+                                        bold: true,
+                                        size: 24
+                                    })
+                                ]
+                            }),
+                            new Paragraph({
+                                spacing: { after: 200 },
+                                children: [
+                                    new TextRun({
+                                        text: "Será debitado na facturação anual desta R∴L∴ o valor de € 15,00 por cada diploma emitido.",
+                                        size: 22
+                                    })
+                                ]
+                            }),
+
+                            // Assinaturas
+                            new Paragraph({
+                                spacing: { before: 600, after: 200 },
+                                children: [
+                                    new TextRun({
+                                        text: "V∴M∴:",
+                                        bold: true,
+                                        size: 24
+                                    }),
+                                    new TextRun({
+                                        text: "\t\t\t\tSec∴ Orad∴:",
+                                        bold: true,
+                                        size: 24
+                                    })
+                                ]
+                            }),
+                            new Paragraph({
+                                spacing: { after: 600 },
+                                children: [
+                                    new TextRun({
+                                        text: "_".repeat(25) + "\t\t" + "_".repeat(25),
+                                        size: 24
+                                    })
+                                ]
+                            }),
+
+                            // Rodapé
+                            new Paragraph({
+                                alignment: AlignmentType.RIGHT,
+                                children: [
+                                    new TextRun({
+                                        text: "Formulário Nº 09 da FP",
+                                        bold: true,
+                                        size: 20
+                                    })
+                                ]
+                            })
+                        ]
+                    }]
+                });
+
+                const blob = await Packer.toBlob(doc);
+                const fileName = `FP09_Pedido_Diploma_MM_${document.getElementById('nomeCandidato').value.replace(/\s+/g, '_')}.docx`;
+                downloadBlob(blob, fileName);
+
+                showSuccess('Arquivo Word gerado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao gerar Word:', error);
+                alert('Erro ao gerar arquivo Word. Tente novamente.');
+            }
+        }
+
+        // Funções auxiliares
+        function createFormFields(fields) {
+            return fields.map(([label, value]) => 
+                new window.docx.Paragraph({
+                    spacing: { after: 200 },
+                    children: [
+                        new window.docx.TextRun({
+                            text: `${label} `,
+                            bold: true,
+                            size: 24
+                        }),
+                        new window.docx.TextRun({
+                            text: value || '',
+                            size: 24
+                        })
+                    ]
+                })
+            );
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString + 'T00:00:00');
+            return date.toLocaleDateString('pt-PT');
+        }
+
+        function downloadBlob(blob, fileName) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            
+            const formActions = document.querySelector('.form-actions');
+            formActions.parentNode.insertBefore(successDiv, formActions);
+            
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.parentNode.removeChild(successDiv);
+                }
+            }, 5000);
+        }
+
+        function printForm() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
