@@ -11,7 +11,14 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 - Seleção de lojas portuguesas
 - Export para Word sem senha
 
-### 2. **Formulário FP 05** - Notificação ao Colégio de Oficiais
+### 2. **Formulário FP 04** - Ficha de Anúncio
+- Ficha para anunciar candidatos à entrada na Ordem
+- Dados pessoais completos do candidato
+- Upload de fotografia do candidato
+- Assinatura digital do V∴M∴
+- Export para Word e PDF
+
+### 3. **Formulário FP 05** - Notificação ao Colégio de Oficiais
 - Notificação para o colégio de oficiais
 - Contactos completos (VM e vigilantes)
 - Sistema de notificação automática
@@ -71,6 +78,7 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 /
 ├── index.html                    # Página inicial com links
 ├── formulario_fp1a_moderno.html  # Formulário FP 1A
+├── formulario_fp04.html          # Formulário FP 04
 ├── formulario_fp05.html          # Formulário FP 05
 └── README.md                     # Este arquivo
 ```
@@ -78,11 +86,12 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 ## 🎯 Como Usar
 
 1. **Acesse a página inicial** (`index.html`)
-2. **Escolha o formulário** desejado (FP 1A ou FP 05)
+2. **Escolha o formulário** desejado (FP 1A, FP 04 ou FP 05)
 3. **Preencha os campos** obrigatórios
 4. **Faça upload do logótipo** da loja (opcional)
-5. **Assine digitalmente** quando necessário
-6. **Exporte para Word** sem senhas ou restrições
+5. **Para o FP 04**: Adicione também a fotografia do candidato
+6. **Assine digitalmente** quando necessário
+7. **Exporte para Word/PDF** sem senhas ou restrições
 
 ## 📱 Compatibilidade
 

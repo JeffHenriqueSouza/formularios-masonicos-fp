@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário FP 04 - Ficha de Anúncio - Ordem Maçónica</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-upload {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100px;
+            height: 80px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo-upload:hover {
+            border-color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .logo-upload input {
+            display: none;
+        }
+
+        .logo-upload img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 5px;
+        }
+
+        .logo-placeholder {
+            font-size: 10px;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header h2 {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .form-title {
+            background: #f39c12;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-group.full-width {
+            flex: 1 1 100%;
+        }
+
+        .form-group.half-width {
+            flex: 1 1 calc(50% - 10px);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #f39c12;
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .photo-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-upload:hover {
+            border-color: #f39c12;
+            background: rgba(243, 156, 18, 0.05);
+        }
+
+        .photo-upload input {
+            display: none;
+        }
+
+        .photo-preview {
+            max-width: 150px;
+            max-height: 180px;
+            margin: 10px auto;
+            border-radius: 8px;
+        }
+
+        .signature-section {
+            margin-top: 30px;
+            padding: 25px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .signature-pad {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .signature-controls {
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d68910;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .form-actions {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+            text-align: center;
+        }
+
+        .error {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b6d7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .info-box h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #0c5460;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .loja-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .loja-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-group.half-width {
+                flex: 1 1 100%;
+            }
+            
+            .form-content {
+                padding: 20px;
+            }
+
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .form-actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-upload" onclick="document.getElementById('logoUpload').click()">
+                <input type="file" id="logoUpload" accept="image/*">
+                <div class="logo-placeholder" id="logoPlaceholder">
+                    LOGÓTIPO<br>DA LOJA
+                </div>
+            </div>
+            
+            <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
+            <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
+        </div>
+
+        <div class="form-title">
+            FORMULÁRIO FP 04 - FICHA DE ANÚNCIO
+        </div>
+
+        <div class="form-content">
+            <form id="fp04Form">
+                <!-- Informações da Loja -->
+                <div class="loja-section">
+                    <h3>INFORMAÇÕES DA LOJA</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lojaSelect">Respeitável Loja <span class="required">*</span></label>
+                            <select id="lojaSelect" name="loja" required>
+                                <option value="">Selecione a Loja</option>
+                                <option value="acacia-1">R∴L∴ Acácia Nº 1</option>
+                                <option value="liberdade-2">R∴L∴ Liberdade Nº 2</option>
+                                <option value="fraternidade-3">R∴L∴ Fraternidade Nº 3</option>
+                                <option value="igualdade-4">R∴L∴ Igualdade Nº 4</option>
+                                <option value="harmonia-5">R∴L∴ Harmonia Nº 5</option>
+                                <option value="outra">Outra</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="outraLoja">Especificar Outra Loja</label>
+                            <input type="text" id="outraLoja" name="outraLoja" placeholder="Nome e número da loja">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dados Pessoais -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="apelidos">Apelido(s) <span class="required">*</span></label>
+                        <input type="text" id="apelidos" name="apelidos" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nomes">Nome(s) próprio(s) <span class="required">*</span></label>
+                        <input type="text" id="nomes" name="nomes" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="estadoCivil">Estado civil <span class="required">*</span></label>
+                        <select id="estadoCivil" name="estadoCivil" required>
+                            <option value="">Selecione</option>
+                            <option value="solteiro">Solteiro(a)</option>
+                            <option value="casado">Casado(a)</option>
+                            <option value="divorciado">Divorciado(a)</option>
+                            <option value="viuvo">Viúvo(a)</option>
+                            <option value="uniao-facto">União de facto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de nascimento <span class="required">*</span></label>
+                        <input type="date" id="dataNascimento" name="dataNascimento" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="localNascimento">Local de nascimento <span class="required">*</span></label>
+                        <input type="text" id="localNascimento" name="localNascimento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nacionalidade">Nacionalidade <span class="required">*</span></label>
+                        <input type="text" id="nacionalidade" name="nacionalidade" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profissao">Profissão <span class="required">*</span></label>
+                        <input type="text" id="profissao" name="profissao" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="localEmprego">Local de emprego</label>
+                        <input type="text" id="localEmprego" name="localEmprego">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="localidadeResidencia">Localidade de residência <span class="required">*</span></label>
+                        <input type="text" id="localidadeResidencia" name="localidadeResidencia" required>
+                    </div>
+                </div>
+
+                <!-- Upload de Foto -->
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label>Fotografia do Candidato</label>
+                        <div class="photo-upload" onclick="document.getElementById('photoUpload').click()">
+                            <input type="file" id="photoUpload" accept="image/*">
+                            <div id="photoPlaceholder">
+                                📷 Clique para adicionar fotografia<br>
+                                <small>Formatos aceitos: JPG, PNG (máx. 2MB)</small>
+                            </div>
+                            <img id="photoPreview" class="photo-preview" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informação Importante -->
+                <div class="info-box">
+                    <h4>📋 INFORMAÇÃO IMPORTANTE</h4>
+                    <p><strong>Solicita-se aos II∴ e I∴ que conhecem o(a) profano(a) e não o(a) achem em condições de entrar na nossa Ordem que se ponham em contacto com o(a) V∴M∴ desta R∴L∴</strong></p>
+                </div>
+
+                <!-- Data e Assinatura -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataAnuncio">Data do Anúncio <span class="required">*</span></label>
+                        <input type="date" id="dataAnuncio" name="dataAnuncio" required>
+                    </div>
+                </div>
+
+                <!-- Assinatura Digital -->
+                <div class="signature-section">
+                    <h4>Assinatura do V∴M∴ <span class="required">*</span></h4>
+                    <canvas id="signaturePad" class="signature-pad" width="400" height="150"></canvas>
+                    <div class="signature-controls">
+                        <button type="button" id="clearSignature" class="btn btn-secondary">🗑️ Limpar Assinatura</button>
+                    </div>
+                    <div id="signatureError" class="error-message" style="display: none;">
+                        Por favor, assine o formulário antes de continuar.
+                    </div>
+                </div>
+
+                <!-- Ações do Formulário -->
+                <div class="form-actions">
+                    <button type="button" id="exportToPDF" class="btn btn-primary">
+                        📄 Exportar para PDF
+                    </button>
+                    <button type="button" id="exportToWord" class="btn btn-success">
+                        📝 Exportar para Word
+                    </button>
+                    <button type="button" id="printForm" class="btn btn-secondary">
+                        🖨️ Imprimir
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Inicialização
+        let signaturePad;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSignaturePad();
+            setupEventListeners();
+            setCurrentDate();
+        });
+
+        // Configurar Signature Pad
+        function initializeSignaturePad() {
+            const canvas = document.getElementById('signaturePad');
+            signaturePad = new SignaturePad(canvas, {
+                backgroundColor: '#fff',
+                penColor: '#000'
+            });
+            
+            // Redimensionar canvas no carregamento
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        function resizeCanvas() {
+            const canvas = document.getElementById('signaturePad');
+            const container = canvas.parentElement;
+            const containerWidth = container.offsetWidth - 40;
+            
+            canvas.width = Math.min(containerWidth, 400);
+            canvas.height = 150;
+            
+            signaturePad.clear();
+        }
+
+        // Configurar Event Listeners
+        function setupEventListeners() {
+            // Logo upload
+            document.getElementById('logoUpload').addEventListener('change', handleLogoUpload);
+            
+            // Photo upload
+            document.getElementById('photoUpload').addEventListener('change', handlePhotoUpload);
+            
+            // Signature controls
+            document.getElementById('clearSignature').addEventListener('click', function() {
+                signaturePad.clear();
+                document.getElementById('signatureError').style.display = 'none';
+            });
+
+            // Form controls
+            document.getElementById('exportToPDF').addEventListener('click', exportToPDF);
+            document.getElementById('exportToWord').addEventListener('click', exportToWord);
+            document.getElementById('printForm').addEventListener('click', printForm);
+
+            // Loja selection
+            document.getElementById('lojaSelect').addEventListener('change', function() {
+                const outraLojaField = document.getElementById('outraLoja');
+                outraLojaField.style.display = this.value === 'outra' ? 'block' : 'none';
+                if (this.value !== 'outra') {
+                    outraLojaField.value = '';
+                }
+            });
+        }
+
+        // Definir data atual
+        function setCurrentDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dataAnuncio').value = today;
+        }
+
+        // Upload de logo
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('O arquivo é muito grande. O tamanho máximo é 2MB.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const placeholder = document.getElementById('logoPlaceholder');
+                    placeholder.innerHTML = `<img src="${e.target.result}" alt="Logo da Loja" style="max-width: 100%; max-height: 100%; border-radius: 5px;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Upload de foto
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('O arquivo é muito grande. O tamanho máximo é 2MB.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('photoPreview');
+                    const placeholder = document.getElementById('photoPlaceholder');
+                    
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Validação do formulário
+        function validateForm() {
+            const requiredFields = [
+                'lojaSelect', 'apelidos', 'nomes', 'estadoCivil', 
+                'dataNascimento', 'localNascimento', 'nacionalidade', 
+                'profissao', 'localidadeResidencia', 'dataAnuncio'
+            ];
+
+            let isValid = true;
+
+            // Verificar campos obrigatórios
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.classList.add('error');
+                    isValid = false;
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+
+            // Verificar outra loja se selecionada
+            const lojaSelect = document.getElementById('lojaSelect');
+            const outraLoja = document.getElementById('outraLoja');
+            if (lojaSelect.value === 'outra' && !outraLoja.value.trim()) {
+                outraLoja.classList.add('error');
+                isValid = false;
+            } else {
+                outraLoja.classList.remove('error');
+            }
+
+            // Verificar assinatura
+            if (signaturePad.isEmpty()) {
+                document.getElementById('signatureError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('signatureError').style.display = 'none';
+            }
+
+            return isValid;
+        }
+
+        // Obter nome da loja
+        function getLojaName() {
+            const lojaSelect = document.getElementById('lojaSelect');
+            const outraLoja = document.getElementById('outraLoja');
+            
+            if (lojaSelect.value === 'outra') {
+                return outraLoja.value;
+            }
+            
+            const selectedOption = lojaSelect.options[lojaSelect.selectedIndex];
+            return selectedOption ? selectedOption.text : '';
+        }
+
+        // Exportar para PDF
+        async function exportToPDF() {
+            if (!validateForm()) {
+                alert('Por favor, preencha todos os campos obrigatórios e assine o formulário.');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                // Configurações
+                const margin = 20;
+                let yPos = margin;
+                const lineHeight = 7;
+                const pageHeight = pdf.internal.pageSize.height;
+
+                // Cabeçalho
+                pdf.setFontSize(16);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('ORDEM MAÇÓNICA MISTA INTERNACIONAL', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight;
+                pdf.text('«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight * 2;
+
+                pdf.setFontSize(14);
+                pdf.text('FORMULÁRIO FP 04 - FICHA DE ANÚNCIO', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight * 2;
+
+                // Dados do formulário
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'normal');
+
+                const formData = {
+                    'R∴L∴:': getLojaName(),
+                    'Apelido(s):': document.getElementById('apelidos').value,
+                    'Nome(s) próprio(s):': document.getElementById('nomes').value,
+                    'Estado civil:': document.getElementById('estadoCivil').options[document.getElementById('estadoCivil').selectedIndex]?.text || '',
+                    'Data de nascimento:': formatDate(document.getElementById('dataNascimento').value),
+                    'Local de nascimento:': document.getElementById('localNascimento').value,
+                    'Nacionalidade:': document.getElementById('nacionalidade').value,
+                    'Profissão:': document.getElementById('profissao').value,
+                    'Local de emprego:': document.getElementById('localEmprego').value,
+                    'Localidade de residência:': document.getElementById('localidadeResidencia').value,
+                    'Data do Anúncio:': formatDate(document.getElementById('dataAnuncio').value)
+                };
+
+                Object.entries(formData).forEach(([label, value]) => {
+                    if (yPos > pageHeight - 30) {
+                        pdf.addPage();
+                        yPos = margin;
+                    }
+                    
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(label, margin, yPos);
+                    pdf.setFont(undefined, 'normal');
+                    pdf.text(value || '', margin + 50, yPos);
+                    yPos += lineHeight;
+                });
+
+                // Adicionar foto se existir
+                const photoPreview = document.getElementById('photoPreview');
+                if (photoPreview.style.display !== 'none' && photoPreview.src) {
+                    if (yPos > pageHeight - 60) {
+                        pdf.addPage();
+                        yPos = margin;
+                    }
+                    
+                    try {
+                        pdf.addImage(photoPreview.src, 'JPEG', margin, yPos, 40, 50);
+                        yPos += 55;
+                    } catch (e) {
+                        console.warn('Erro ao adicionar foto:', e);
+                    }
+                }
+
+                // Adicionar assinatura
+                if (!signaturePad.isEmpty()) {
+                    if (yPos > pageHeight - 60) {
+                        pdf.addPage();
+                        yPos = margin;
+                    }
+                    
+                    yPos += lineHeight;
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('Assinatura do V∴M∴:', margin, yPos);
+                    yPos += lineHeight;
+                    
+                    const signatureDataURL = signaturePad.toDataURL();
+                    pdf.addImage(signatureDataURL, 'PNG', margin, yPos, 60, 25);
+                }
+
+                // Rodapé
+                pdf.setFontSize(10);
+                pdf.text('Formulário Nº 04 da FP', pdf.internal.pageSize.width - margin, pageHeight - 10, { align: 'right' });
+
+                // Salvar PDF
+                const fileName = `FP04_Ficha_Anuncio_${document.getElementById('apelidos').value.replace(/\s+/g, '_')}.pdf`;
+                pdf.save(fileName);
+
+                showSuccess('PDF gerado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF. Tente novamente.');
+            }
+        }
+
+        // Exportar para Word
+        async function exportToWord() {
+            if (!validateForm()) {
+                alert('Por favor, preencha todos os campos obrigatórios e assine o formulário.');
+                return;
+            }
+
+            try {
+                const docx = window.docx;
+                const { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel } = docx;
+
+                const doc = new Document({
+                    sections: [{
+                        properties: {},
+                        children: [
+                            // Cabeçalho
+                            new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({
+                                        text: "ORDEM MAÇÓNICA MISTA INTERNACIONAL",
+                                        bold: true,
+                                        size: 32
+                                    })
+                                ]
+                            }),
+                            new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({
+                                        text: "«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA",
+                                        bold: true,
+                                        size: 24
+                                    })
+                                ]
+                            }),
+                            new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                spacing: { after: 400 },
+                                children: [
+                                    new TextRun({
+                                        text: "FORMULÁRIO FP 04 - FICHA DE ANÚNCIO",
+                                        bold: true,
+                                        size: 28
+                                    })
+                                ]
+                            }),
+
+                            // Dados do formulário
+                            ...createFormFields([
+                                ['R∴L∴:', getLojaName()],
+                                ['Apelido(s):', document.getElementById('apelidos').value],
+                                ['Nome(s) próprio(s):', document.getElementById('nomes').value],
+                                ['Estado civil:', document.getElementById('estadoCivil').options[document.getElementById('estadoCivil').selectedIndex]?.text || ''],
+                                ['Data de nascimento:', formatDate(document.getElementById('dataNascimento').value)],
+                                ['Local de nascimento:', document.getElementById('localNascimento').value],
+                                ['Nacionalidade:', document.getElementById('nacionalidade').value],
+                                ['Profissão:', document.getElementById('profissao').value],
+                                ['Local de emprego:', document.getElementById('localEmprego').value],
+                                ['Localidade de residência:', document.getElementById('localidadeResidencia').value],
+                                ['Data do Anúncio:', formatDate(document.getElementById('dataAnuncio').value)]
+                            ]),
+
+                            // Informação importante
+                            new Paragraph({
+                                spacing: { before: 400, after: 400 },
+                                children: [
+                                    new TextRun({
+                                        text: "Solicita-se aos II∴ e I∴ que conhecem o(a) profano(a) e não o(a) achem em condições de entrar na nossa Ordem que se ponham em contacto com o(a) V∴M∴ desta R∴L∴",
+                                        italics: true,
+                                        size: 22
+                                    })
+                                ]
+                            }),
+
+                            // Assinatura
+                            new Paragraph({
+                                spacing: { before: 600 },
+                                children: [
+                                    new TextRun({
+                                        text: "Assinatura do V∴M∴:",
+                                        bold: true,
+                                        size: 24
+                                    })
+                                ]
+                            }),
+                            new Paragraph({
+                                spacing: { after: 600 },
+                                children: [
+                                    new TextRun({
+                                        text: "_".repeat(50),
+                                        size: 24
+                                    })
+                                ]
+                            }),
+
+                            // Rodapé
+                            new Paragraph({
+                                alignment: AlignmentType.RIGHT,
+                                children: [
+                                    new TextRun({
+                                        text: "Formulário Nº 04 da FP",
+                                        bold: true,
+                                        size: 20
+                                    })
+                                ]
+                            })
+                        ]
+                    }]
+                });
+
+                const blob = await Packer.toBlob(doc);
+                const fileName = `FP04_Ficha_Anuncio_${document.getElementById('apelidos').value.replace(/\s+/g, '_')}.docx`;
+                downloadBlob(blob, fileName);
+
+                showSuccess('Arquivo Word gerado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao gerar Word:', error);
+                alert('Erro ao gerar arquivo Word. Tente novamente.');
+            }
+        }
+
+        // Funções auxiliares
+        function createFormFields(fields) {
+            return fields.map(([label, value]) => 
+                new window.docx.Paragraph({
+                    spacing: { after: 200 },
+                    children: [
+                        new window.docx.TextRun({
+                            text: `${label} `,
+                            bold: true,
+                            size: 24
+                        }),
+                        new window.docx.TextRun({
+                            text: value || '',
+                            size: 24
+                        })
+                    ]
+                })
+            );
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString + 'T00:00:00');
+            return date.toLocaleDateString('pt-PT');
+        }
+
+        function downloadBlob(blob, fileName) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            
+            const formActions = document.querySelector('.form-actions');
+            formActions.parentNode.insertBefore(successDiv, formActions);
+            
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.parentNode.removeChild(successDiv);
+                }
+            }, 5000);
+        }
+
+        function printForm() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
