@@ -253,6 +253,15 @@
             background: #545b62;
         }
 
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
         .btn-success {
             background: #28a745;
             color: white;
@@ -373,6 +382,55 @@
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
+        }
+
+        /* Modal de Pré-visualização */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            height: 90%;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .preview-content {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.4;
+            color: #000;
         }
 
         /* Print styles */
@@ -551,6 +609,9 @@
 
                 <!-- Ações do Formulário -->
                 <div class="form-actions">
+                    <button type="button" id="previewForm" class="btn btn-info">
+                        👁️ Pré-visualizar
+                    </button>
                     <button type="button" id="exportToPDF" class="btn btn-primary">
                         📄 Exportar para PDF
                     </button>
@@ -562,6 +623,19 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal de Pré-visualização -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Pré-visualização do Documento</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div id="previewContent" class="preview-content">
+                <!-- Conteúdo será inserido aqui via JavaScript -->
+            </div>
         </div>
     </div>
 
@@ -1087,6 +1161,106 @@
                 }
             }, 5000);
         }
+
+        function printForm() {
+            window.print();
+        }
+
+        // Funções de Pré-visualização
+        function showPreview() {
+            if (!validateForm()) {
+                alert('Por favor, preencha todos os campos obrigatórios antes de visualizar.');
+                return;
+            }
+
+            const modal = document.getElementById('previewModal');
+            const previewContent = document.getElementById('previewContent');
+            
+            // Gerar conteúdo da pré-visualização
+            const content = generatePreviewContent();
+            previewContent.innerHTML = content;
+            
+            modal.style.display = 'block';
+        }
+
+        function generatePreviewContent() {
+            const loja = getLojaName();
+            const numeroLoja = document.getElementById('numeroLoja').value || 'N/A';
+            const oriente = document.getElementById('oriente').value;
+            const dataRequerimento = document.getElementById('dataRequerimento').value;
+            const nomeCandidato = document.getElementById('nomeCandidato').value;
+            const grauAtual = document.getElementById('grauAtual').value;
+            const vmNome = document.getElementById('vmNome').value;
+            const secretarioNome = document.getElementById('secretarioNome').value;
+
+            return `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="margin: 0; font-size: 18px;">ORDEM MAÇÓNICA MISTA INTERNACIONAL</h2>
+                    <h3 style="margin: 5px 0; font-size: 16px;">«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h3>
+                    <h2 style="margin: 20px 0; font-size: 16px; text-decoration: underline;">PEDIDO DE DIPLOMA DE MESTRE MAÇOM</h2>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p><strong>R∴L∴:</strong> ${loja} Nº ${numeroLoja}</p>
+                    <p><strong>Or∴ de:</strong> ${oriente}</p>
+                    <p><strong>Data do Requerimento:</strong> ${dataRequerimento}</p>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 14px; margin-bottom: 15px;">DADOS DO CANDIDATO:</h3>
+                    <div style="padding: 15px; border: 1px solid #ddd; margin-bottom: 15px;">
+                        <p style="margin: 5px 0;"><strong>Nome Completo:</strong> ${nomeCandidato}</p>
+                        <p style="margin: 5px 0;"><strong>Grau Maçónico Atual:</strong> ${grauAtual}</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 14px; margin-bottom: 15px;">INFORMAÇÕES:</h3>
+                    <p style="margin: 10px 0;">💰 <strong>Custo do Diploma:</strong> €15,00 (quinze euros)</p>
+                    <p style="margin: 10px 0;">📋 Este pedido está de acordo com os regulamentos da Federação Portuguesa.</p>
+                </div>
+
+                <div style="margin-top: 40px;">
+                    <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                        <div style="text-align: center;">
+                            <div style="border-bottom: 1px solid #000; width: 200px; height: 50px; margin-bottom: 10px;"></div>
+                            <p><strong>V∴M∴ ${vmNome}</strong></p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="border-bottom: 1px solid #000; width: 200px; height: 50px; margin-bottom: 10px;"></div>
+                            <p><strong>Sec∴ Orad∴ ${secretarioNome}</strong></p>
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: 30px;">
+                        <p><strong>Formulário Nº 09 da FP</strong></p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Botão de pré-visualização
+            document.getElementById('previewForm').addEventListener('click', showPreview);
+            
+            // Fechar modal
+            document.querySelector('.close').addEventListener('click', function() {
+                document.getElementById('previewModal').style.display = 'none';
+            });
+            
+            // Fechar modal clicando fora dele
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('previewModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Event listeners existentes
+            document.getElementById('exportToPDF').addEventListener('click', exportToPDF);
+            document.getElementById('exportToWord').addEventListener('click', exportToWord);
+            document.getElementById('printForm').addEventListener('click', printForm);
+        });
 
         function printForm() {
             window.print();

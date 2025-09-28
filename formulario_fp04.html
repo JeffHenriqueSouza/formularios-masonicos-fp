@@ -240,6 +240,15 @@
             background: #545b62;
         }
 
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
         .btn-success {
             background: #28a745;
             color: white;
@@ -958,6 +967,86 @@
                 }
             }, 5000);
         }
+
+        function printForm() {
+            window.print();
+        }
+
+        // Funções de Pré-visualização
+        function showPreview() {
+            if (!validateForm()) {
+                alert('Por favor, preencha todos os campos obrigatórios antes de visualizar.');
+                return;
+            }
+
+            const modal = document.getElementById('previewModal');
+            const previewContent = document.getElementById('previewContent');
+            
+            const content = generatePreviewContent();
+            previewContent.innerHTML = content;
+            
+            modal.style.display = 'block';
+        }
+
+        function generatePreviewContent() {
+            const loja = document.getElementById('lojaSelect').value;
+            const apelidos = document.getElementById('apelidos').value;
+            const nomes = document.getElementById('nomes').value;
+            const estadoCivil = document.getElementById('estadoCivil').value;
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const localNascimento = document.getElementById('localNascimento').value;
+            const nacionalidade = document.getElementById('nacionalidade').value;
+            const vmNome = document.getElementById('vmNome').value;
+
+            return `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="margin: 0; font-size: 18px;">ORDEM MAÇÓNICA MISTA INTERNACIONAL</h2>
+                    <h3 style="margin: 5px 0; font-size: 16px;">«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h3>
+                    <h2 style="margin: 20px 0; font-size: 16px; text-decoration: underline;">FICHA DE ANÚNCIO</h2>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Loja:</strong> ${loja}</p>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 14px; margin-bottom: 15px;">DADOS DO CANDIDATO:</h3>
+                    <div style="padding: 15px; border: 1px solid #ddd;">
+                        <p style="margin: 5px 0;"><strong>Apelidos:</strong> ${apelidos}</p>
+                        <p style="margin: 5px 0;"><strong>Nomes:</strong> ${nomes}</p>
+                        <p style="margin: 5px 0;"><strong>Estado Civil:</strong> ${estadoCivil}</p>
+                        <p style="margin: 5px 0;"><strong>Data de Nascimento:</strong> ${dataNascimento}</p>
+                        <p style="margin: 5px 0;"><strong>Local de Nascimento:</strong> ${localNascimento}</p>
+                        <p style="margin: 5px 0;"><strong>Nacionalidade:</strong> ${nacionalidade}</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; text-align: center;">
+                    <div style="border-bottom: 1px solid #000; width: 200px; height: 50px; margin: 0 auto 10px;"></div>
+                    <p><strong>V∴M∴ ${vmNome}</strong></p>
+                </div>
+
+                <div style="text-align: right; margin-top: 30px;">
+                    <p><strong>Formulário Nº 04 da FP</strong></p>
+                </div>
+            `;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('previewForm').addEventListener('click', showPreview);
+            
+            document.querySelector('.close').addEventListener('click', function() {
+                document.getElementById('previewModal').style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('previewModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
 
         function printForm() {
             window.print();
