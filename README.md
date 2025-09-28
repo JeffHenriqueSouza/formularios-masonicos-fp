@@ -48,6 +48,15 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 - Assinaturas duplas (V∴M∴ e Secretário Orador)
 - Export para Word e PDF
 
+### 7. **Formulário FP 11** - Declaração de Regularidade
+- Declaração oficial da situação de regularidade de um membro
+- Verificação de cotizações em dia (Art. 9º)
+- Verificação de assiduidade aos trabalhos (Art. 56º)
+- Verificação de comportamento exemplar (Art. 57º)
+- Verificação de ausência de processos disciplinares
+- Assinatura digital do V∴M∴
+- Export para Word e PDF
+
 ## 🌟 Características
 
 - ✅ **Design Moderno**: Interface profissional e responsiva
@@ -107,21 +116,23 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 ├── formulario_fp06.html          # Formulário FP 06
 ├── formulario_fp09.html          # Formulário FP 09
 ├── formulario_fp10.html          # Formulário FP 10
+├── formulario_fp11.html          # Formulário FP 11
 └── README.md                     # Este arquivo
 ```
 
 ## 🎯 Como Usar
 
 1. **Acesse a página inicial** (`index.html`)
-2. **Escolha o formulário** desejado (FP 1A, FP 04, FP 05, FP 06, FP 09 ou FP 10)
+2. **Escolha o formulário** desejado (FP 1A, FP 04, FP 05, FP 06, FP 09, FP 10 ou FP 11)
 3. **Preencha os campos** obrigatórios
 4. **Faça upload do logótipo** da loja (opcional)
 5. **Para o FP 04**: Adicione também a fotografia do candidato
 6. **Para o FP 06**: Adicione deputados e suplentes dinamicamente
 7. **Para o FP 09**: Selecione o grau maçónico atual do candidato
 8. **Para o FP 10**: Adicione 2 fotografias tipo passe e descreva o motivo da perda
-9. **Assine digitalmente** quando necessário
-10. **Exporte para Word/PDF** sem senhas ou restrições
+9. **Para o FP 11**: Marque os itens de regularidade aplicáveis ao membro
+10. **Assine digitalmente** quando necessário
+11. **Exporte para Word/PDF** sem senhas ou restrições
 
 ## 📱 Compatibilidade
 
