@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário FP 06 - Notificação de Deputados - Ordem Maçónica</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-upload {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100px;
+            height: 80px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo-upload:hover {
+            border-color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .logo-upload input {
+            display: none;
+        }
+
+        .logo-upload img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 5px;
+        }
+
+        .logo-placeholder {
+            font-size: 10px;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header h2 {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .form-title {
+            background: #8e44ad;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-group.full-width {
+            flex: 1 1 100%;
+        }
+
+        .form-group.half-width {
+            flex: 1 1 calc(50% - 10px);
+        }
+
+        .form-group.third-width {
+            flex: 1 1 calc(33.333% - 14px);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #8e44ad;
+            box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .loja-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .loja-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .deputies-section {
+            background: #fff5f5;
+            border: 2px solid #fed7d7;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .deputies-section h3 {
+            color: #8e44ad;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .deputy-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .deputy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .deputy-number {
+            background: #8e44ad;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .add-deputy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .add-deputy-btn:hover {
+            background: #218838;
+        }
+
+        .remove-deputy-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .remove-deputy-btn:hover {
+            background: #c82333;
+        }
+
+        .signature-section {
+            margin-top: 30px;
+            padding: 25px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+        }
+
+        .signatures-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .signature-box {
+            text-align: center;
+        }
+
+        .signature-pad {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .signature-controls {
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: #8e44ad;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #7d3c98;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .form-actions {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+            text-align: center;
+        }
+
+        .error {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b6d7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .info-box h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #0c5460;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-group.half-width,
+            .form-group.third-width {
+                flex: 1 1 100%;
+            }
+            
+            .form-content {
+                padding: 20px;
+            }
+
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+
+            .signatures-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .form-actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-upload" onclick="document.getElementById('logoUpload').click()">
+                <input type="file" id="logoUpload" accept="image/*">
+                <div class="logo-placeholder" id="logoPlaceholder">
+                    LOGÓTIPO<br>DA LOJA
+                </div>
+            </div>
+            
+            <h1>ORDEM MAÇÓNICA MISTA INTERNACIONAL</h1>
+            <h2>«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA</h2>
+        </div>
+
+        <div class="form-title">
+            FORMULÁRIO FP 06 - NOTIFICAÇÃO DE DEPUTADOS
+        </div>
+
+        <div class="form-content">
+            <form id="fp06Form">
+                <!-- Informações da Loja -->
+                <div class="loja-section">
+                    <h3>INFORMAÇÕES DA LOJA</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lojaSelect">Respeitável Loja <span class="required">*</span></label>
+                            <select id="lojaSelect" name="loja" required>
+                                <option value="">Selecione a Loja</option>
+                                <option value="acacia-1">R∴L∴ Acácia Nº 1</option>
+                                <option value="liberdade-2">R∴L∴ Liberdade Nº 2</option>
+                                <option value="fraternidade-3">R∴L∴ Fraternidade Nº 3</option>
+                                <option value="igualdade-4">R∴L∴ Igualdade Nº 4</option>
+                                <option value="harmonia-5">R∴L∴ Harmonia Nº 5</option>
+                                <option value="outra">Outra</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="outraLoja">Especificar Outra Loja</label>
+                            <input type="text" id="outraLoja" name="outraLoja" placeholder="Nome e número da loja">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações da Eleição -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="oriente">Oriente <span class="required">*</span></label>
+                        <input type="text" id="oriente" name="oriente" required placeholder="Cidade/Local">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataEleicao">Data da Eleição <span class="required">*</span></label>
+                        <input type="date" id="dataEleicao" name="dataEleicao" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="anoMaconico">Ano Maçónico <span class="required">*</span></label>
+                        <input type="text" id="anoMaconico" name="anoMaconico" required placeholder="Ex: 6024 - 6025">
+                    </div>
+                </div>
+
+                <!-- Deputados -->
+                <div class="deputies-section">
+                    <h3>👥 DEPUTADOS</h3>
+                    <div id="deputadosContainer">
+                        <div class="deputy-item" data-type="deputado">
+                            <div class="deputy-header">
+                                <span class="deputy-number">DEPUTADO 1</span>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nome Completo <span class="required">*</span></label>
+                                    <input type="text" name="deputado_nome[]" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Grau</label>
+                                    <input type="text" name="deputado_grau[]" placeholder="Ex: 18º">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="addDeputado" class="add-deputy-btn">➕ Adicionar Deputado</button>
+                </div>
+
+                <!-- Deputados Suplentes -->
+                <div class="deputies-section">
+                    <h3>👥 DEPUTADOS SUPLENTES</h3>
+                    <div id="suplentesContainer">
+                        <div class="deputy-item" data-type="suplente">
+                            <div class="deputy-header">
+                                <span class="deputy-number">SUPLENTE 1</span>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nome Completo <span class="required">*</span></label>
+                                    <input type="text" name="suplente_nome[]" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Grau</label>
+                                    <input type="text" name="suplente_grau[]" placeholder="Ex: 18º">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="addSuplente" class="add-deputy-btn">➕ Adicionar Suplente</button>
+                </div>
+
+                <!-- Informação -->
+                <div class="info-box">
+                    <h4>📋 INFORMAÇÃO</h4>
+                    <p>Esta notificação deve ser enviada após a eleição dos deputados e suplentes da Respeitável Loja para o respectivo ano maçónico.</p>
+                </div>
+
+                <!-- Assinaturas -->
+                <div class="signature-section">
+                    <h4 style="text-align: center; margin-bottom: 20px;">Assinaturas <span class="required">*</span></h4>
+                    <div class="signatures-container">
+                        <div class="signature-box">
+                            <h5>Venerável Mestre</h5>
+                            <canvas id="signaturePadVM" class="signature-pad" width="300" height="120"></canvas>
+                            <div class="signature-controls">
+                                <button type="button" id="clearSignatureVM" class="btn btn-secondary btn-sm">🗑️ Limpar</button>
+                            </div>
+                            <div id="signatureErrorVM" class="error-message" style="display: none;">
+                                Assinatura do V∴M∴ obrigatória.
+                            </div>
+                        </div>
+                        <div class="signature-box">
+                            <h5>Secretário Orador</h5>
+                            <canvas id="signaturePadSO" class="signature-pad" width="300" height="120"></canvas>
+                            <div class="signature-controls">
+                                <button type="button" id="clearSignatureSO" class="btn btn-secondary btn-sm">🗑️ Limpar</button>
+                            </div>
+                            <div id="signatureErrorSO" class="error-message" style="display: none;">
+                                Assinatura do Sec∴ Orad∴ obrigatória.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações do Formulário -->
+                <div class="form-actions">
+                    <button type="button" id="exportToPDF" class="btn btn-primary">
+                        📄 Exportar para PDF
+                    </button>
+                    <button type="button" id="exportToWord" class="btn btn-success">
+                        📝 Exportar para Word
+                    </button>
+                    <button type="button" id="printForm" class="btn btn-secondary">
+                        🖨️ Imprimir
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Inicialização
+        let signaturePadVM, signaturePadSO;
+        let deputadoCount = 1;
+        let suplenteCount = 1;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSignaturePads();
+            setupEventListeners();
+            setCurrentDate();
+        });
+
+        // Configurar Signature Pads
+        function initializeSignaturePads() {
+            const canvasVM = document.getElementById('signaturePadVM');
+            const canvasSO = document.getElementById('signaturePadSO');
+            
+            signaturePadVM = new SignaturePad(canvasVM, {
+                backgroundColor: '#fff',
+                penColor: '#000'
+            });
+            
+            signaturePadSO = new SignaturePad(canvasSO, {
+                backgroundColor: '#fff',
+                penColor: '#000'
+            });
+            
+            resizeCanvases();
+            window.addEventListener('resize', resizeCanvases);
+        }
+
+        function resizeCanvases() {
+            const canvases = document.querySelectorAll('.signature-pad');
+            canvases.forEach(canvas => {
+                const container = canvas.parentElement;
+                const containerWidth = container.offsetWidth - 40;
+                
+                canvas.width = Math.min(containerWidth, 300);
+                canvas.height = 120;
+            });
+            
+            if (signaturePadVM) signaturePadVM.clear();
+            if (signaturePadSO) signaturePadSO.clear();
+        }
+
+        // Configurar Event Listeners
+        function setupEventListeners() {
+            // Logo upload
+            document.getElementById('logoUpload').addEventListener('change', handleLogoUpload);
+            
+            // Signature controls
+            document.getElementById('clearSignatureVM').addEventListener('click', function() {
+                signaturePadVM.clear();
+                document.getElementById('signatureErrorVM').style.display = 'none';
+            });
+
+            document.getElementById('clearSignatureSO').addEventListener('click', function() {
+                signaturePadSO.clear();
+                document.getElementById('signatureErrorSO').style.display = 'none';
+            });
+
+            // Deputy management
+            document.getElementById('addDeputado').addEventListener('click', addDeputado);
+            document.getElementById('addSuplente').addEventListener('click', addSuplente);
+
+            // Form controls
+            document.getElementById('exportToPDF').addEventListener('click', exportToPDF);
+            document.getElementById('exportToWord').addEventListener('click', exportToWord);
+            document.getElementById('printForm').addEventListener('click', printForm);
+
+            // Loja selection
+            document.getElementById('lojaSelect').addEventListener('change', function() {
+                const outraLojaField = document.getElementById('outraLoja');
+                outraLojaField.style.display = this.value === 'outra' ? 'block' : 'none';
+                if (this.value !== 'outra') {
+                    outraLojaField.value = '';
+                }
+            });
+        }
+
+        // Definir data atual
+        function setCurrentDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dataEleicao').value = today;
+            
+            // Calcular ano maçónico (adicionar 4000 ao ano atual)
+            const currentYear = new Date().getFullYear();
+            const masonicYear = currentYear + 4000;
+            const nextMasonicYear = masonicYear + 1;
+            document.getElementById('anoMaconico').value = `${masonicYear} - ${nextMasonicYear}`;
+        }
+
+        // Upload de logo
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('O arquivo é muito grande. O tamanho máximo é 2MB.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const placeholder = document.getElementById('logoPlaceholder');
+                    placeholder.innerHTML = `<img src="${e.target.result}" alt="Logo da Loja" style="max-width: 100%; max-height: 100%; border-radius: 5px;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Adicionar deputado
+        function addDeputado() {
+            deputadoCount++;
+            const container = document.getElementById('deputadosContainer');
+            const deputyHTML = `
+                <div class="deputy-item" data-type="deputado">
+                    <div class="deputy-header">
+                        <span class="deputy-number">DEPUTADO ${deputadoCount}</span>
+                        <button type="button" class="remove-deputy-btn" onclick="removeDeputy(this)">❌ Remover</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome Completo <span class="required">*</span></label>
+                            <input type="text" name="deputado_nome[]" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Grau</label>
+                            <input type="text" name="deputado_grau[]" placeholder="Ex: 18º">
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', deputyHTML);
+        }
+
+        // Adicionar suplente
+        function addSuplente() {
+            suplenteCount++;
+            const container = document.getElementById('suplentesContainer');
+            const suplenteHTML = `
+                <div class="deputy-item" data-type="suplente">
+                    <div class="deputy-header">
+                        <span class="deputy-number">SUPLENTE ${suplenteCount}</span>
+                        <button type="button" class="remove-deputy-btn" onclick="removeDeputy(this)">❌ Remover</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome Completo <span class="required">*</span></label>
+                            <input type="text" name="suplente_nome[]" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Grau</label>
+                            <input type="text" name="suplente_grau[]" placeholder="Ex: 18º">
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', suplenteHTML);
+        }
+
+        // Remover deputado/suplente
+        function removeDeputy(button) {
+            const deputyItem = button.closest('.deputy-item');
+            const type = deputyItem.dataset.type;
+            
+            deputyItem.remove();
+            
+            // Renumerar
+            if (type === 'deputado') {
+                renumberDeputies('#deputadosContainer', 'DEPUTADO');
+                deputadoCount = document.querySelectorAll('#deputadosContainer .deputy-item').length;
+            } else {
+                renumberDeputies('#suplentesContainer', 'SUPLENTE');
+                suplenteCount = document.querySelectorAll('#suplentesContainer .deputy-item').length;
+            }
+        }
+
+        // Renumerar deputados
+        function renumberDeputies(containerSelector, prefix) {
+            const container = document.querySelector(containerSelector);
+            const deputies = container.querySelectorAll('.deputy-item');
+            
+            deputies.forEach((deputy, index) => {
+                const numberSpan = deputy.querySelector('.deputy-number');
+                numberSpan.textContent = `${prefix} ${index + 1}`;
+            });
+        }
+
+        // Validação do formulário
+        function validateForm() {
+            const requiredFields = [
+                'lojaSelect', 'oriente', 'dataEleicao', 'anoMaconico'
+            ];
+
+            let isValid = true;
+
+            // Verificar campos obrigatórios
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.classList.add('error');
+                    isValid = false;
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+
+            // Verificar outra loja se selecionada
+            const lojaSelect = document.getElementById('lojaSelect');
+            const outraLoja = document.getElementById('outraLoja');
+            if (lojaSelect.value === 'outra' && !outraLoja.value.trim()) {
+                outraLoja.classList.add('error');
+                isValid = false;
+            } else {
+                outraLoja.classList.remove('error');
+            }
+
+            // Verificar deputados
+            const deputadoNomes = document.querySelectorAll('input[name="deputado_nome[]"]');
+            deputadoNomes.forEach(input => {
+                if (!input.value.trim()) {
+                    input.classList.add('error');
+                    isValid = false;
+                } else {
+                    input.classList.remove('error');
+                }
+            });
+
+            // Verificar suplentes
+            const suplenteNomes = document.querySelectorAll('input[name="suplente_nome[]"]');
+            suplenteNomes.forEach(input => {
+                if (!input.value.trim()) {
+                    input.classList.add('error');
+                    isValid = false;
+                } else {
+                    input.classList.remove('error');
+                }
+            });
+
+            // Verificar assinaturas
+            if (signaturePadVM.isEmpty()) {
+                document.getElementById('signatureErrorVM').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('signatureErrorVM').style.display = 'none';
+            }
+
+            if (signaturePadSO.isEmpty()) {
+                document.getElementById('signatureErrorSO').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('signatureErrorSO').style.display = 'none';
+            }
+
+            return isValid;
+        }
+
+        // Obter nome da loja
+        function getLojaName() {
+            const lojaSelect = document.getElementById('lojaSelect');
+            const outraLoja = document.getElementById('outraLoja');
+            
+            if (lojaSelect.value === 'outra') {
+                return outraLoja.value;
+            }
+            
+            const selectedOption = lojaSelect.options[lojaSelect.selectedIndex];
+            return selectedOption ? selectedOption.text : '';
+        }
+
+        // Obter dados dos deputados
+        function getDeputadosData() {
+            const deputados = [];
+            const nomes = document.querySelectorAll('input[name="deputado_nome[]"]');
+            const graus = document.querySelectorAll('input[name="deputado_grau[]"]');
+            
+            for (let i = 0; i < nomes.length; i++) {
+                if (nomes[i].value.trim()) {
+                    deputados.push({
+                        nome: nomes[i].value,
+                        grau: graus[i].value || ''
+                    });
+                }
+            }
+            
+            return deputados;
+        }
+
+        // Obter dados dos suplentes
+        function getSuplentesData() {
+            const suplentes = [];
+            const nomes = document.querySelectorAll('input[name="suplente_nome[]"]');
+            const graus = document.querySelectorAll('input[name="suplente_grau[]"]');
+            
+            for (let i = 0; i < nomes.length; i++) {
+                if (nomes[i].value.trim()) {
+                    suplentes.push({
+                        nome: nomes[i].value,
+                        grau: graus[i].value || ''
+                    });
+                }
+            }
+            
+            return suplentes;
+        }
+
+        // Exportar para PDF
+        async function exportToPDF() {
+            if (!validateForm()) {
+                alert('Por favor, preencha todos os campos obrigatórios e assine o formulário.');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                // Configurações
+                const margin = 20;
+                let yPos = margin;
+                const lineHeight = 7;
+                const pageHeight = pdf.internal.pageSize.height;
+
+                // Cabeçalho
+                pdf.setFontSize(16);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('ORDEM MAÇÓNICA MISTA INTERNACIONAL', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight;
+                pdf.text('«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight * 2;
+
+                pdf.setFontSize(14);
+                pdf.text('FORMULÁRIO FP 06 - NOTIFICAÇÃO DE DEPUTADOS', pdf.internal.pageSize.width / 2, yPos, { align: 'center' });
+                yPos += lineHeight * 2;
+
+                // Dados básicos
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'normal');
+
+                const basicData = {
+                    'R∴L∴:': getLojaName(),
+                    'Oriente:': document.getElementById('oriente').value,
+                    'Data da Eleição:': formatDate(document.getElementById('dataEleicao').value),
+                    'Ano Maçónico:': document.getElementById('anoMaconico').value
+                };
+
+                Object.entries(basicData).forEach(([label, value]) => {
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(label, margin, yPos);
+                    pdf.setFont(undefined, 'normal');
+                    pdf.text(value || '', margin + 40, yPos);
+                    yPos += lineHeight;
+                });
+
+                yPos += lineHeight;
+
+                // Deputados
+                const deputados = getDeputadosData();
+                if (deputados.length > 0) {
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('DEPUTADOS:', margin, yPos);
+                    yPos += lineHeight;
+                    
+                    deputados.forEach((deputado, index) => {
+                        pdf.setFont(undefined, 'normal');
+                        const text = `${index + 1}. ${deputado.nome}${deputado.grau ? ` (${deputado.grau})` : ''}`;
+                        pdf.text(text, margin + 5, yPos);
+                        yPos += lineHeight;
+                    });
+                }
+
+                yPos += lineHeight;
+
+                // Suplentes
+                const suplentes = getSuplentesData();
+                if (suplentes.length > 0) {
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('DEPUTADOS SUPLENTES:', margin, yPos);
+                    yPos += lineHeight;
+                    
+                    suplentes.forEach((suplente, index) => {
+                        pdf.setFont(undefined, 'normal');
+                        const text = `${index + 1}. ${suplente.nome}${suplente.grau ? ` (${suplente.grau})` : ''}`;
+                        pdf.text(text, margin + 5, yPos);
+                        yPos += lineHeight;
+                    });
+                }
+
+                // Assinaturas
+                if (yPos > pageHeight - 80) {
+                    pdf.addPage();
+                    yPos = margin;
+                }
+                
+                yPos += lineHeight * 2;
+                
+                pdf.setFont(undefined, 'bold');
+                pdf.text('V∴M∴:', margin, yPos);
+                pdf.text('Sec∴ Orad∴:', pdf.internal.pageSize.width / 2 + margin, yPos);
+                yPos += lineHeight;
+                
+                if (!signaturePadVM.isEmpty()) {
+                    const signatureVMDataURL = signaturePadVM.toDataURL();
+                    pdf.addImage(signatureVMDataURL, 'PNG', margin, yPos, 60, 25);
+                }
+                
+                if (!signaturePadSO.isEmpty()) {
+                    const signatureSODataURL = signaturePadSO.toDataURL();
+                    pdf.addImage(signatureSODataURL, 'PNG', pdf.internal.pageSize.width / 2 + margin, yPos, 60, 25);
+                }
+
+                // Rodapé
+                pdf.setFontSize(10);
+                pdf.text('Formulário Nº 06 da FP', pdf.internal.pageSize.width - margin, pageHeight - 10, { align: 'right' });
+
+                // Salvar PDF
+                const fileName = `FP06_Notificacao_Deputados_${getLojaName().replace(/\s+/g, '_')}.pdf`;
+                pdf.save(fileName);
+
+                showSuccess('PDF gerado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF. Tente novamente.');
+            }
+        }
+
+        // Exportar para Word
+        async function exportToWord() {
+            if (!validateForm()) {
+                alert('Por favor, preencha todos os campos obrigatórios e assine o formulário.');
+                return;
+            }
+
+            try {
+                const docx = window.docx;
+                const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
+
+                const deputados = getDeputadosData();
+                const suplentes = getSuplentesData();
+
+                const children = [
+                    // Cabeçalho
+                    new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({
+                                text: "ORDEM MAÇÓNICA MISTA INTERNACIONAL",
+                                bold: true,
+                                size: 32
+                            })
+                        ]
+                    }),
+                    new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({
+                                text: "«LE DROIT HUMAIN» - FEDERAÇÃO PORTUGUESA",
+                                bold: true,
+                                size: 24
+                            })
+                        ]
+                    }),
+                    new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 400 },
+                        children: [
+                            new TextRun({
+                                text: "FORMULÁRIO FP 06 - NOTIFICAÇÃO DE DEPUTADOS",
+                                bold: true,
+                                size: 28
+                            })
+                        ]
+                    }),
+
+                    // Dados básicos
+                    ...createFormFields([
+                        ['R∴L∴:', getLojaName()],
+                        ['Oriente:', document.getElementById('oriente').value],
+                        ['Data da Eleição:', formatDate(document.getElementById('dataEleicao').value)],
+                        ['Ano Maçónico:', document.getElementById('anoMaconico').value]
+                    ])
+                ];
+
+                // Adicionar deputados
+                if (deputados.length > 0) {
+                    children.push(new Paragraph({
+                        spacing: { before: 400, after: 200 },
+                        children: [
+                            new TextRun({
+                                text: "DEPUTADOS:",
+                                bold: true,
+                                size: 24
+                            })
+                        ]
+                    }));
+
+                    deputados.forEach((deputado, index) => {
+                        children.push(new Paragraph({
+                            spacing: { after: 100 },
+                            children: [
+                                new TextRun({
+                                    text: `${index + 1}. ${deputado.nome}${deputado.grau ? ` (${deputado.grau})` : ''}`,
+                                    size: 22
+                                })
+                            ]
+                        }));
+                    });
+                }
+
+                // Adicionar suplentes
+                if (suplentes.length > 0) {
+                    children.push(new Paragraph({
+                        spacing: { before: 400, after: 200 },
+                        children: [
+                            new TextRun({
+                                text: "DEPUTADOS SUPLENTES:",
+                                bold: true,
+                                size: 24
+                            })
+                        ]
+                    }));
+
+                    suplentes.forEach((suplente, index) => {
+                        children.push(new Paragraph({
+                            spacing: { after: 100 },
+                            children: [
+                                new TextRun({
+                                    text: `${index + 1}. ${suplente.nome}${suplente.grau ? ` (${suplente.grau})` : ''}`,
+                                    size: 22
+                                })
+                            ]
+                        }));
+                    });
+                }
+
+                // Assinaturas
+                children.push(
+                    new Paragraph({
+                        spacing: { before: 600, after: 200 },
+                        children: [
+                            new TextRun({
+                                text: "V∴M∴:",
+                                bold: true,
+                                size: 24
+                            }),
+                            new TextRun({
+                                text: "\t\t\t\tSec∴ Orad∴:",
+                                bold: true,
+                                size: 24
+                            })
+                        ]
+                    }),
+                    new Paragraph({
+                        spacing: { after: 600 },
+                        children: [
+                            new TextRun({
+                                text: "_".repeat(25) + "\t\t" + "_".repeat(25),
+                                size: 24
+                            })
+                        ]
+                    }),
+                    new Paragraph({
+                        alignment: AlignmentType.RIGHT,
+                        children: [
+                            new TextRun({
+                                text: "Formulário Nº 06 da FP",
+                                bold: true,
+                                size: 20
+                            })
+                        ]
+                    })
+                );
+
+                const doc = new Document({
+                    sections: [{
+                        properties: {},
+                        children: children
+                    }]
+                });
+
+                const blob = await Packer.toBlob(doc);
+                const fileName = `FP06_Notificacao_Deputados_${getLojaName().replace(/\s+/g, '_')}.docx`;
+                downloadBlob(blob, fileName);
+
+                showSuccess('Arquivo Word gerado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao gerar Word:', error);
+                alert('Erro ao gerar arquivo Word. Tente novamente.');
+            }
+        }
+
+        // Funções auxiliares
+        function createFormFields(fields) {
+            return fields.map(([label, value]) => 
+                new window.docx.Paragraph({
+                    spacing: { after: 200 },
+                    children: [
+                        new window.docx.TextRun({
+                            text: `${label} `,
+                            bold: true,
+                            size: 24
+                        }),
+                        new window.docx.TextRun({
+                            text: value || '',
+                            size: 24
+                        })
+                    ]
+                })
+            );
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString + 'T00:00:00');
+            return date.toLocaleDateString('pt-PT');
+        }
+
+        function downloadBlob(blob, fileName) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            
+            const formActions = document.querySelector('.form-actions');
+            formActions.parentNode.insertBefore(successDiv, formActions);
+            
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.parentNode.removeChild(successDiv);
+                }
+            }, 5000);
+        }
+
+        function printForm() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

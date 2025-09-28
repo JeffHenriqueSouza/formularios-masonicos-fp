@@ -24,6 +24,13 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 - Sistema de notificação automática
 - Export para Word e PDF
 
+### 4. **Formulário FP 06** - Notificação de Deputados
+- Notificação da eleição de deputados e suplentes
+- Gestão dinâmica de múltiplos deputados e suplentes
+- Dados do ano maçónico e data da eleição
+- Assinaturas duplas (V∴M∴ e Secretário Orador)
+- Export para Word e PDF
+
 ## 🌟 Características
 
 - ✅ **Design Moderno**: Interface profissional e responsiva
@@ -80,18 +87,20 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 ├── formulario_fp1a_moderno.html  # Formulário FP 1A
 ├── formulario_fp04.html          # Formulário FP 04
 ├── formulario_fp05.html          # Formulário FP 05
+├── formulario_fp06.html          # Formulário FP 06
 └── README.md                     # Este arquivo
 ```
 
 ## 🎯 Como Usar
 
 1. **Acesse a página inicial** (`index.html`)
-2. **Escolha o formulário** desejado (FP 1A, FP 04 ou FP 05)
+2. **Escolha o formulário** desejado (FP 1A, FP 04, FP 05 ou FP 06)
 3. **Preencha os campos** obrigatórios
 4. **Faça upload do logótipo** da loja (opcional)
 5. **Para o FP 04**: Adicione também a fotografia do candidato
-6. **Assine digitalmente** quando necessário
-7. **Exporte para Word/PDF** sem senhas ou restrições
+6. **Para o FP 06**: Adicione deputados e suplentes dinamicamente
+7. **Assine digitalmente** quando necessário
+8. **Exporte para Word/PDF** sem senhas ou restrições
 
 ## 📱 Compatibilidade
 
