@@ -57,6 +57,15 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 - Assinatura digital do V∴M∴
 - Export para Word e PDF
 
+### 8. **Formulário FP 11B** - Pedido de Informação sobre Regularidade
+- Formulário duplo: Pedido e Declaração de Regularidade
+- Solicitação de informação sobre regularidade de membro
+- Resposta com status de assiduidade e situação com o tesouro
+- Referências aos Artigos 9º, 56º e 57º dos Regulamentos
+- Assinaturas duplas (Presidente do Atelier e Secretário Orador)
+- Modo alternável entre Pedido e Declaração
+- Export para Word e PDF
+
 ## 🌟 Características
 
 - ✅ **Design Moderno**: Interface profissional e responsiva
@@ -117,13 +126,14 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 ├── formulario_fp09.html          # Formulário FP 09
 ├── formulario_fp10.html          # Formulário FP 10
 ├── formulario_fp11.html          # Formulário FP 11
+├── formulario_fp11b.html         # Formulário FP 11B
 └── README.md                     # Este arquivo
 ```
 
 ## 🎯 Como Usar
 
 1. **Acesse a página inicial** (`index.html`)
-2. **Escolha o formulário** desejado (FP 1A, FP 04, FP 05, FP 06, FP 09, FP 10 ou FP 11)
+2. **Escolha o formulário** desejado (FP 1A, FP 04, FP 05, FP 06, FP 09, FP 10, FP 11 ou FP 11B)
 3. **Preencha os campos** obrigatórios
 4. **Faça upload do logótipo** da loja (opcional)
 5. **Para o FP 04**: Adicione também a fotografia do candidato
@@ -131,8 +141,9 @@ Sistema de formulários digitais para a Ordem Maçónica Mista Internacional «L
 7. **Para o FP 09**: Selecione o grau maçónico atual do candidato
 8. **Para o FP 10**: Adicione 2 fotografias tipo passe e descreva o motivo da perda
 9. **Para o FP 11**: Marque os itens de regularidade aplicáveis ao membro
-10. **Assine digitalmente** quando necessário
-11. **Exporte para Word/PDF** sem senhas ou restrições
+10. **Para o FP 11B**: Escolha entre "Pedido" ou "Declaração" e preencha conforme necessário
+11. **Assine digitalmente** quando necessário
+12. **Exporte para Word/PDF** sem senhas ou restrições
 
 ## 📱 Compatibilidade
 
